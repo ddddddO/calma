@@ -1,5 +1,6 @@
-# calma
-Calendar for Markdown
+# <font color="red">cal</font><font color="blue">ma</font>
+Calendar for Markdown<br>
+Inspired by [jpcal](https://github.com/y-yagi/jpcal)
 
 ## Usage
 
