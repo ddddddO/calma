@@ -66,7 +66,11 @@ const (
 
 func buildCalendar(date time.Time) (string, error) {
 	buf := &strings.Builder{}
-	_, err := buf.WriteString(calendarHeader + "\n")
+	_, err := buf.WriteString(fmt.Sprintf("#### %d年%d月\n", date.Year(), date.Month()))
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
+	_, err = buf.WriteString(calendarHeader + "\n")
 	if err != nil {
 		return "", errors.WithStack(err)
 	}

@@ -5,7 +5,8 @@ Inspired by [jpcal](https://github.com/y-yagi/jpcal)
 ## Usage
 
 ```sh
-13:38:56 > go run main.go
+13:41:38 > go run main.go
+#### 2021年9月
 |<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|
 |--|--|--|--|--|--|--|
 | <font color="red">22</font> | 23 | 24 | 25 | 26 | 27 | <font color="blue">28</font> |
@@ -19,6 +20,7 @@ Inspired by [jpcal](https://github.com/y-yagi/jpcal)
 
 Markdown
 
+#### 2021年9月
 |<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|
 |--|--|--|--|--|--|--|
 | <font color="red">22</font> | 23 | 24 | 25 | 26 | 27 | <font color="blue">28</font> |
