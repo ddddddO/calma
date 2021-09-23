@@ -5,7 +5,7 @@ Inspired by [jpcal](https://github.com/y-yagi/jpcal)
 ## Usage
 
 ```sh
-13:41:38 > go run main.go
+14:01:34 > calma
 #### 2021年9月
 |<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|
 |--|--|--|--|--|--|--|
