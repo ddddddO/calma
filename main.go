@@ -23,6 +23,8 @@ type Day struct {
 }
 
 type week struct {
+	executedMonth time.Month
+
 	Sunday    *Day
 	Monday    *Day
 	Tuesday   *Day
@@ -30,6 +32,11 @@ type week struct {
 	Thursday  *Day
 	Friday    *Day
 	Saturday  *Day
+}
+
+type month struct {
+	executedMonth time.Month
+	weeks         []*week
 }
 
 func main() {
@@ -67,8 +74,9 @@ func buildCalendar(date time.Time) (string, error) {
 		return "", errors.WithStack(err)
 	}
 
-	weeks := calculateWeeks(date)
-	for _, wk := range weeks {
+	m := &month{executedMonth: date.Month()}
+	m.calculateWeeks(date)
+	for _, wk := range m.weeks {
 		tmpl, err := template.New("week").Parse(weekTemplate)
 		if err != nil {
 			return "", errors.WithStack(err)
@@ -85,9 +93,9 @@ func buildCalendar(date time.Time) (string, error) {
 	return buf.String(), nil
 }
 
-func calculateWeeks(date time.Time) []*week {
+func (m *month) calculateWeeks(date time.Time) {
 	current := date
-	wk := calculateWeek(current)
+	wk := m.calculateWeek(current)
 	weeks := []*week{wk}
 
 	retreat := current
@@ -95,11 +103,11 @@ func calculateWeeks(date time.Time) []*week {
 	for {
 		retreat = retreat.AddDate(0, 0, -7)
 		if retreat.Month() != current.Month() {
-			wk := calculateWeek(retreat)
+			wk := m.calculateWeek(retreat)
 			weeks = append([]*week{wk}, weeks...)
 			break
 		}
-		wk := calculateWeek(retreat)
+		wk := m.calculateWeek(retreat)
 		weeks = append([]*week{wk}, weeks...)
 	}
 
@@ -108,19 +116,19 @@ func calculateWeeks(date time.Time) []*week {
 	for {
 		advance = advance.AddDate(0, 0, 7)
 		if advance.Month() != current.Month() {
-			wk := calculateWeek(advance)
+			wk := m.calculateWeek(advance)
 			weeks = append(weeks, wk)
 			break
 		}
-		wk := calculateWeek(advance)
+		wk := m.calculateWeek(advance)
 		weeks = append(weeks, wk)
 	}
 
-	return weeks
+	m.weeks = weeks
 }
 
-func calculateWeek(point time.Time) *week {
-	wk := &week{}
+func (m *month) calculateWeek(point time.Time) *week {
+	wk := &week{executedMonth: m.executedMonth}
 	// pointの週の日曜日まで遡る
 	retreat := point
 	for {
@@ -144,7 +152,11 @@ func calculateWeek(point time.Time) *week {
 }
 
 func (wk *week) calculateDay(date time.Time) {
-	day := &Day{N: uint(date.Day())}
+	day := &Day{
+		N:           uint(date.Day()),
+		IsThisMonth: date.Month() == wk.executedMonth,
+	}
+
 	switch date.Weekday() {
 	case time.Sunday:
 		day.HolidayType = RedHoliday
