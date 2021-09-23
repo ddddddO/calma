@@ -23,13 +23,13 @@ type Day struct {
 }
 
 type week struct {
-	Sunday    Day
-	Monday    Day
-	Tuesday   Day
-	Wednesday Day
-	Thursday  Day
-	Friday    Day
-	Saturday  Day
+	Sunday    *Day
+	Monday    *Day
+	Tuesday   *Day
+	Wednesday *Day
+	Thursday  *Day
+	Friday    *Day
+	Saturday  *Day
 }
 
 func main() {
@@ -79,10 +79,10 @@ func buildCalendar(date time.Time) (string, error) {
 	return buf.String(), nil
 }
 
-func calculateWeeks(date time.Time) []week {
+func calculateWeeks(date time.Time) []*week {
 	current := date
 	wk := calculateWeek(current)
-	weeks := []week{wk}
+	weeks := []*week{wk}
 
 	retreat := current
 	// currentの前月の最終週まで遡る
@@ -90,11 +90,11 @@ func calculateWeeks(date time.Time) []week {
 		retreat = retreat.AddDate(0, 0, -7)
 		if retreat.Month() != current.Month() {
 			wk := calculateWeek(retreat)
-			weeks = append([]week{wk}, weeks...)
+			weeks = append([]*week{wk}, weeks...)
 			break
 		}
 		wk := calculateWeek(retreat)
-		weeks = append([]week{wk}, weeks...)
+		weeks = append([]*week{wk}, weeks...)
 	}
 
 	// currentの次月の初週まで進む
@@ -113,30 +113,14 @@ func calculateWeeks(date time.Time) []week {
 	return weeks
 }
 
-func calculateWeek(point time.Time) week {
-	wk := week{}
+func calculateWeek(point time.Time) *week {
+	wk := &week{}
 	// pointの週の日曜日まで遡る
 	retreat := point
 	for {
+		wk.calculateDay(retreat)
 		if retreat.Weekday() == time.Sunday {
-			wk.Sunday.N = uint(retreat.Day())
-			wk.Sunday.HolidayType = RedHoliday
 			break
-		}
-		switch retreat.Weekday() {
-		case time.Monday:
-			wk.Monday.N = uint(retreat.Day())
-		case time.Tuesday:
-			wk.Tuesday.N = uint(retreat.Day())
-		case time.Wednesday:
-			wk.Wednesday.N = uint(retreat.Day())
-		case time.Thursday:
-			wk.Thursday.N = uint(retreat.Day())
-		case time.Friday:
-			wk.Friday.N = uint(retreat.Day())
-		case time.Saturday:
-			wk.Saturday.N = uint(retreat.Day())
-			wk.Saturday.HolidayType = BlueHoliday
 		}
 		retreat = retreat.AddDate(0, 0, -1)
 	}
@@ -144,24 +128,33 @@ func calculateWeek(point time.Time) week {
 	// pointの週の土曜日まで進む
 	advance := point
 	for {
+		wk.calculateDay(advance)
 		if advance.Weekday() == time.Saturday {
-			wk.Saturday.N = uint(advance.Day())
-			wk.Saturday.HolidayType = BlueHoliday
 			break
-		}
-		switch advance.Weekday() {
-		case time.Monday:
-			wk.Monday.N = uint(advance.Day())
-		case time.Tuesday:
-			wk.Tuesday.N = uint(advance.Day())
-		case time.Wednesday:
-			wk.Wednesday.N = uint(advance.Day())
-		case time.Thursday:
-			wk.Thursday.N = uint(advance.Day())
-		case time.Friday:
-			wk.Friday.N = uint(advance.Day())
 		}
 		advance = advance.AddDate(0, 0, 1)
 	}
 	return wk
+}
+
+func (wk *week) calculateDay(date time.Time) {
+	day := &Day{N: uint(date.Day())}
+	switch date.Weekday() {
+	case time.Sunday:
+		day.HolidayType = RedHoliday
+		wk.Sunday = day
+	case time.Monday:
+		wk.Monday = day
+	case time.Tuesday:
+		wk.Tuesday = day
+	case time.Wednesday:
+		wk.Wednesday = day
+	case time.Thursday:
+		wk.Thursday = day
+	case time.Friday:
+		wk.Friday = day
+	case time.Saturday:
+		day.HolidayType = BlueHoliday
+		wk.Saturday = day
+	}
 }
