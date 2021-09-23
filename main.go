@@ -12,15 +12,17 @@ import (
 	"github.com/yut-kt/goholiday"
 )
 
+type holidayType uint
+
 const (
-	NotHoliday  = iota // 平日
-	RedHoliday         // 日曜・祝日
-	BlueHoliday        // 土曜
+	NotHoliday  holidayType = iota // 平日
+	RedHoliday                     // 日曜・祝日
+	BlueHoliday                    // 土曜
 )
 
 type Day struct {
 	N           uint
-	HolidayType uint
+	HolidayType holidayType
 	IsThisMonth bool
 }
 
@@ -198,7 +200,7 @@ func (wk *week) calculateDay(date time.Time) {
 	}
 }
 
-func calculateHoliday(date time.Time) uint {
+func calculateHoliday(date time.Time) holidayType {
 	if goholiday.IsNationalHoliday(date) {
 		return RedHoliday
 	}
