@@ -8,8 +8,8 @@ import (
 	"text/template"
 	"time"
 
+	holiday "github.com/holiday-jp/holiday_jp-go"
 	"github.com/pkg/errors"
-	"github.com/yut-kt/goholiday"
 )
 
 const (
@@ -199,7 +199,7 @@ func (wk *week) calculateDay(date time.Time) {
 }
 
 func calculateHoliday(date time.Time) uint {
-	if goholiday.IsNationalHoliday(date) {
+	if holiday.IsHoliday(date) {
 		return RedHoliday
 	}
 	if date.Weekday() == time.Sunday {
