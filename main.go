@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -24,7 +25,7 @@ type Day struct {
 }
 
 type week struct {
-	executedMonth time.Month
+	targetMonth time.Month
 
 	Sunday    *Day
 	Monday    *Day
@@ -36,14 +37,30 @@ type week struct {
 }
 
 type month struct {
-	executedMonth time.Month
-	weeks         []*week
+	targetMonth time.Month
+	weeks       []*week
 }
 
 func main() {
-	now := time.Now()
+	var retreat, advance int
+	flag.IntVar(&retreat, "r", 0, "Number of months to retreat")
+	flag.IntVar(&advance, "a", 0, "Number of months to advance")
+	flag.Parse()
 
-	calendar, err := buildCalendar(now)
+	if retreat != 0 && advance != 0 {
+		fmt.Errorf("%+v", errors.New("Please use either"))
+		os.Exit(1)
+	}
+
+	date := time.Now()
+	if retreat != 0 {
+		date = date.AddDate(0, -retreat, 0)
+	}
+	if advance != 0 {
+		date = date.AddDate(0, advance, 0)
+	}
+
+	calendar, err := buildCalendar(date)
 	if err != nil {
 		fmt.Errorf("%+v", err)
 		os.Exit(1)
@@ -79,7 +96,7 @@ func buildCalendar(date time.Time) (string, error) {
 		return "", errors.WithStack(err)
 	}
 
-	m := &month{executedMonth: date.Month()}
+	m := &month{targetMonth: date.Month()}
 	m.calculateWeeks(date)
 	for _, wk := range m.weeks {
 		tmpl, err := template.New("week").Parse(weekTemplate)
@@ -133,7 +150,7 @@ func (m *month) calculateWeeks(date time.Time) {
 }
 
 func (m *month) calculateWeek(point time.Time) *week {
-	wk := &week{executedMonth: m.executedMonth}
+	wk := &week{targetMonth: m.targetMonth}
 	// pointの週の日曜日まで遡る
 	retreat := point
 	for {
@@ -159,7 +176,7 @@ func (m *month) calculateWeek(point time.Time) *week {
 func (wk *week) calculateDay(date time.Time) {
 	day := &Day{
 		N:           uint(date.Day()),
-		IsThisMonth: date.Month() == wk.executedMonth,
+		IsThisMonth: date.Month() == wk.targetMonth,
 		HolidayType: calculateHoliday(date),
 	}
 
