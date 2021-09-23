@@ -10,14 +10,26 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	NotHoliday  = iota // 平日
+	RedHoliday         // 日曜・祝日
+	BlueHoliday        // 土曜
+)
+
+type Day struct {
+	N           uint
+	HolidayType uint
+	IsThisMonth bool
+}
+
 type week struct {
-	Sunday    uint
-	Monday    uint
-	Tuesday   uint
-	Wednesday uint
-	Thursday  uint
-	Friday    uint
-	Saturday  uint
+	Sunday    Day
+	Monday    Day
+	Tuesday   Day
+	Wednesday Day
+	Thursday  Day
+	Friday    Day
+	Saturday  Day
 }
 
 func main() {
@@ -35,7 +47,7 @@ func main() {
 const (
 	calendarHeader = `|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|`
 	calendarSplit  = `|--|--|--|--|--|--|--|`
-	weekTemplate   = `|<font color="red">{{.Sunday}}</font>|{{.Monday}}|{{.Tuesday}}|{{.Wednesday}}|{{.Thursday}}|{{.Friday}}|<font color="blue">{{.Saturday}}</font>|`
+	weekTemplate   = `|<font color="red">{{.Sunday.N}}</font>|{{.Monday.N}}|{{.Tuesday.N}}|{{.Wednesday.N}}|{{.Thursday.N}}|{{.Friday.N}}|<font color="blue">{{.Saturday.N}}</font>|`
 )
 
 func buildCalendar(date time.Time) (string, error) {
@@ -107,22 +119,24 @@ func calculateWeek(point time.Time) week {
 	retreat := point
 	for {
 		if retreat.Weekday() == time.Sunday {
-			wk.Sunday = uint(retreat.Day())
+			wk.Sunday.N = uint(retreat.Day())
+			wk.Sunday.HolidayType = RedHoliday
 			break
 		}
 		switch retreat.Weekday() {
 		case time.Monday:
-			wk.Monday = uint(retreat.Day())
+			wk.Monday.N = uint(retreat.Day())
 		case time.Tuesday:
-			wk.Tuesday = uint(retreat.Day())
+			wk.Tuesday.N = uint(retreat.Day())
 		case time.Wednesday:
-			wk.Wednesday = uint(retreat.Day())
+			wk.Wednesday.N = uint(retreat.Day())
 		case time.Thursday:
-			wk.Thursday = uint(retreat.Day())
+			wk.Thursday.N = uint(retreat.Day())
 		case time.Friday:
-			wk.Friday = uint(retreat.Day())
+			wk.Friday.N = uint(retreat.Day())
 		case time.Saturday:
-			wk.Saturday = uint(retreat.Day())
+			wk.Saturday.N = uint(retreat.Day())
+			wk.Saturday.HolidayType = BlueHoliday
 		}
 		retreat = retreat.AddDate(0, 0, -1)
 	}
@@ -131,20 +145,21 @@ func calculateWeek(point time.Time) week {
 	advance := point
 	for {
 		if advance.Weekday() == time.Saturday {
-			wk.Saturday = uint(advance.Day())
+			wk.Saturday.N = uint(advance.Day())
+			wk.Saturday.HolidayType = BlueHoliday
 			break
 		}
 		switch advance.Weekday() {
 		case time.Monday:
-			wk.Monday = uint(advance.Day())
+			wk.Monday.N = uint(advance.Day())
 		case time.Tuesday:
-			wk.Tuesday = uint(advance.Day())
+			wk.Tuesday.N = uint(advance.Day())
 		case time.Wednesday:
-			wk.Wednesday = uint(advance.Day())
+			wk.Wednesday.N = uint(advance.Day())
 		case time.Thursday:
-			wk.Thursday = uint(advance.Day())
+			wk.Thursday.N = uint(advance.Day())
 		case time.Friday:
-			wk.Friday = uint(advance.Day())
+			wk.Friday.N = uint(advance.Day())
 		}
 		advance = advance.AddDate(0, 0, 1)
 	}
