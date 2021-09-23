@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/yut-kt/goholiday"
 )
 
 const (
@@ -155,11 +156,11 @@ func (wk *week) calculateDay(date time.Time) {
 	day := &Day{
 		N:           uint(date.Day()),
 		IsThisMonth: date.Month() == wk.executedMonth,
+		HolidayType: calculateHoliday(date),
 	}
 
 	switch date.Weekday() {
 	case time.Sunday:
-		day.HolidayType = RedHoliday
 		wk.Sunday = day
 	case time.Monday:
 		wk.Monday = day
@@ -172,7 +173,19 @@ func (wk *week) calculateDay(date time.Time) {
 	case time.Friday:
 		wk.Friday = day
 	case time.Saturday:
-		day.HolidayType = BlueHoliday
 		wk.Saturday = day
 	}
+}
+
+func calculateHoliday(date time.Time) uint {
+	if goholiday.IsNationalHoliday(date) {
+		return RedHoliday
+	}
+	if date.Weekday() == time.Sunday {
+		return RedHoliday
+	}
+	if date.Weekday() == time.Saturday {
+		return BlueHoliday
+	}
+	return NotHoliday
 }

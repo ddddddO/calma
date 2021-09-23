@@ -1,2 +1,4 @@
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
+github.com/yut-kt/goholiday v0.1.7 h1:JyIcNsc7AsTM1v8pUYLuT9In1C2F3/6Hfg3VmfcQv6Y=
+github.com/yut-kt/goholiday v0.1.7/go.mod h1:pgkHLJD/FjdhQtENPE2Q8TkQ+y31hwjODFVsd9O+JJ4=
