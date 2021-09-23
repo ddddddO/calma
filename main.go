@@ -47,7 +47,13 @@ func main() {
 const (
 	calendarHeader = `|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|`
 	calendarSplit  = `|--|--|--|--|--|--|--|`
-	weekTemplate   = `|<font color="red">{{.Sunday.N}}</font>|{{.Monday.N}}|{{.Tuesday.N}}|{{.Wednesday.N}}|{{.Thursday.N}}|{{.Friday.N}}|<font color="blue">{{.Saturday.N}}</font>|`
+	weekTemplate   = `|{{ if eq .Sunday.HolidayType 1 }} <font color="red">{{ if .Sunday.IsThisMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else if eq .Sunday.HolidayType 2 }} <font color="blue">{{ if .Sunday.IsThisMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else }} {{ if .Sunday.IsThisMonth }}<b>{{ end }}{{.Sunday.N}} {{ end }}` +
+		`|{{ if eq .Monday.HolidayType 1 }} <font color="red">{{ if .Monday.IsThisMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else if eq .Monday.HolidayType 2 }} <font color="blue">{{ if .Monday.IsThisMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else }} {{ if .Monday.IsThisMonth }}<b>{{ end }}{{.Monday.N}} {{ end }}` +
+		`|{{ if eq .Tuesday.HolidayType 1 }} <font color="red">{{ if .Tuesday.IsThisMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else if eq .Tuesday.HolidayType 2 }} <font color="blue">{{ if .Tuesday.IsThisMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else }} {{ if .Tuesday.IsThisMonth }}<b>{{ end }}{{.Tuesday.N}} {{ end }}` +
+		`|{{ if eq .Wednesday.HolidayType 1 }} <font color="red">{{ if .Wednesday.IsThisMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else if eq .Wednesday.HolidayType 2 }} <font color="blue">{{ if .Wednesday.IsThisMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else }} {{ if .Wednesday.IsThisMonth }}<b>{{ end }}{{.Wednesday.N}} {{ end }}` +
+		`|{{ if eq .Thursday.HolidayType 1 }} <font color="red">{{ if .Thursday.IsThisMonth }}<b>{{ end }}{{.Thursday.N}}</font> {{ else if eq .Thursday.HolidayType 2 }} <font color="blue">{{ if .Thursday.IsThisMonth }}<b>{{ end }}{{.Thursday.N}}</font> {{ else }} {{ if .Thursday.IsThisMonth }}<b>{{ end }}{{.Thursday.N}} {{ end }}` +
+		`|{{ if eq .Friday.HolidayType 1 }} <font color="red">{{ if .Friday.IsThisMonth }}<b>{{ end }}{{.Friday.N}}</font> {{ else if eq .Friday.HolidayType 2 }} <font color="blue">{{ if .Friday.IsThisMonth }}<b>{{ end }}{{.Friday.N}}</font> {{ else }} {{ if .Friday.IsThisMonth }}<b>{{ end }}{{.Friday.N}} {{ end }}` +
+		`|{{ if eq .Saturday.HolidayType 1 }} <font color="red">{{ if .Saturday.IsThisMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else if eq .Saturday.HolidayType 2 }} <font color="blue">{{ if .Saturday.IsThisMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else }} {{ if .Saturday.IsThisMonth }}<b>{{ end }}{{.Saturday.N}} {{ end }}|`
 )
 
 func buildCalendar(date time.Time) (string, error) {
