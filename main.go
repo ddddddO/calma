@@ -9,6 +9,7 @@ import (
 	"time"
 
 	holiday "github.com/holiday-jp/holiday_jp-go"
+	_ "github.com/holiday-jp/holiday_jp-go/statik"
 	"github.com/pkg/errors"
 )
 
