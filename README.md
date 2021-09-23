@@ -30,3 +30,17 @@ Markdown
 | <font color="red"><b>19</font> | <font color="red"><b>20</font> | <b>21 | <b>22 | <font color="red"><b>23</font> | <b>24 | <font color="blue"><b>25</font> |
 | <font color="red"><b>26</font> | <b>27 | <b>28 | <b>29 | <b>30 | 1 | <font color="blue">2</font> |
 | <font color="red">3</font> | 4 | 5 | 6 | 7 | 8 | <font color="blue">9</font> |
+
+
+## Installation
+
+go version is 1.17 or higher
+
+```sh
+go install github.com/ddddddO/calma@latest
+```
+
+go version is 1.16 or less
+```
+go get github.com/ddddddO/calma
+```
