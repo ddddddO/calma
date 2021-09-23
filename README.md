@@ -34,13 +34,13 @@ Markdown
 
 ## Installation
 
-go version is 1.17 or higher
+go version is 1.16 or higher
 
 ```sh
 go install github.com/ddddddO/calma@latest
 ```
 
-go version is 1.16 or less
+go version is 1.15 or less
 ```
 go get github.com/ddddddO/calma
 ```
