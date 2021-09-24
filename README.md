@@ -5,7 +5,7 @@ Inspired by [jpcal](https://github.com/y-yagi/jpcal)<br>
 
 ## Usage
 
-```sh
+```console
 16:55:37 > calma -h
 Usage of calma:
   -a int
