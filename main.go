@@ -9,7 +9,8 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/yut-kt/goholiday"
+	// "github.com/yut-kt/goholiday"
+	holiday "github.com/holiday-jp/holiday_jp-go"
 )
 
 type holidayType uint
@@ -201,7 +202,7 @@ func (w *week) calculateDay(date time.Time) {
 func (d *Day) calculateHoliday(date time.Time) {
 	var hType holidayType
 	switch {
-	case goholiday.IsNationalHoliday(date):
+	case holiday.IsHoliday(date):
 		hType = RedHoliday
 	case date.Weekday() == time.Sunday:
 		hType = RedHoliday
