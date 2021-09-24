@@ -6,7 +6,7 @@ Inspired by [jpcal](https://github.com/y-yagi/jpcal)<br>
 ## Usage
 
 ```console
-16:55:37 > calma -h
+19:07:38 > calma -h
 This CLI outputs Japanese calendar in Markdown. It supports national holidays.
 
 Usage of calma:
@@ -15,7 +15,7 @@ Usage of calma:
   -r int
         Number of months to retreat
 
-16:56:16 > calma
+19:07:57 > calma
 #### 2021年9月
 |<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|
 |--|--|--|--|--|--|--|
@@ -25,8 +25,6 @@ Usage of calma:
 | <font color="red"><b>12</font> | <b>13 | <b>14 | <b>15 | <b>16 | <b>17 | <font color="blue"><b>18</font> |
 | <font color="red"><b>19</font> | <font color="red"><b>20</font> | <b>21 | <b>22 | <font color="red"><b>23</font> | <b>24 | <font color="blue"><b>25</font> |
 | <font color="red"><b>26</font> | <b>27 | <b>28 | <b>29 | <b>30 | 1 | <font color="blue">2</font> |
-| <font color="red">3</font> | 4 | 5 | 6 | 7 | 8 | <font color="blue">9</font> |
-
 ```
 
 Markdown output image<br>
