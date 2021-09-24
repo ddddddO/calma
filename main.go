@@ -15,12 +15,12 @@ import (
 type holidayType uint
 
 const (
-	NotHoliday  holidayType = iota // 平日
-	RedHoliday                     // 日曜・祝日
-	BlueHoliday                    // 土曜
+	notHoliday  holidayType = iota // 平日
+	redHoliday                     // 日曜・祝日
+	blueHoliday                    // 土曜
 )
 
-type Day struct {
+type day struct {
 	N             uint
 	HolidayType   holidayType
 	IsTargetMonth bool
@@ -29,13 +29,13 @@ type Day struct {
 type week struct {
 	targetMonth time.Month
 
-	Sunday    *Day
-	Monday    *Day
-	Tuesday   *Day
-	Wednesday *Day
-	Thursday  *Day
-	Friday    *Day
-	Saturday  *Day
+	Sunday    *day
+	Monday    *day
+	Tuesday   *day
+	Wednesday *day
+	Thursday  *day
+	Friday    *day
+	Saturday  *day
 }
 
 type month struct {
@@ -174,7 +174,7 @@ func (m *month) calculateWeek(date time.Time) *week {
 }
 
 func (w *week) calculateDay(date time.Time) {
-	day := &Day{
+	day := &day{
 		N:             uint(date.Day()),
 		IsTargetMonth: date.Month() == w.targetMonth,
 	}
@@ -198,17 +198,17 @@ func (w *week) calculateDay(date time.Time) {
 	}
 }
 
-func (d *Day) calculateHoliday(date time.Time) {
+func (d *day) calculateHoliday(date time.Time) {
 	var hType holidayType
 	switch {
 	case holiday.IsHoliday(date):
-		hType = RedHoliday
+		hType = redHoliday
 	case date.Weekday() == time.Sunday:
-		hType = RedHoliday
+		hType = redHoliday
 	case date.Weekday() == time.Saturday:
-		hType = BlueHoliday
+		hType = blueHoliday
 	default:
-		hType = NotHoliday
+		hType = notHoliday
 	}
 	d.HolidayType = hType
 }
