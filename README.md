@@ -29,7 +29,7 @@ Usage of calma:
 
 ```
 
-Output image
+Markdown output image<br>
 ![image](https://github.com/ddddddO/calma/blob/main/sample.png)
 
 ## Installation
