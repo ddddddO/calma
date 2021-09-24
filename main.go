@@ -8,9 +8,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/pkg/errors"
-	// "github.com/yut-kt/goholiday"
 	holiday "github.com/holiday-jp/holiday_jp-go"
+	"github.com/pkg/errors"
 )
 
 type holidayType uint
