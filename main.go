@@ -21,9 +21,9 @@ const (
 )
 
 type Day struct {
-	N           uint
-	HolidayType holidayType
-	IsThisMonth bool
+	N             uint
+	HolidayType   holidayType
+	IsTargetMonth bool
 }
 
 type week struct {
@@ -43,6 +43,8 @@ type month struct {
 	weeks       []*week
 }
 
+var jst = time.FixedZone("JST", +9*60*60)
+
 func main() {
 	var retreat, advance int
 	flag.IntVar(&retreat, "r", 0, "Number of months to retreat")
@@ -54,7 +56,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	date := time.Now()
+	date := time.Now().In(jst)
 	if retreat != 0 {
 		date = date.AddDate(0, -retreat, 0)
 	}
@@ -72,24 +74,25 @@ func main() {
 }
 
 const (
-	calendarHeader = `|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|`
-	calendarSplit  = `|--|--|--|--|--|--|--|`
-	weekTemplate   = `|{{ if eq .Sunday.HolidayType 1 }} <font color="red">{{ if .Sunday.IsThisMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else if eq .Sunday.HolidayType 2 }} <font color="blue">{{ if .Sunday.IsThisMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else }} {{ if .Sunday.IsThisMonth }}<b>{{ end }}{{.Sunday.N}} {{ end }}` +
-		`|{{ if eq .Monday.HolidayType 1 }} <font color="red">{{ if .Monday.IsThisMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else if eq .Monday.HolidayType 2 }} <font color="blue">{{ if .Monday.IsThisMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else }} {{ if .Monday.IsThisMonth }}<b>{{ end }}{{.Monday.N}} {{ end }}` +
-		`|{{ if eq .Tuesday.HolidayType 1 }} <font color="red">{{ if .Tuesday.IsThisMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else if eq .Tuesday.HolidayType 2 }} <font color="blue">{{ if .Tuesday.IsThisMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else }} {{ if .Tuesday.IsThisMonth }}<b>{{ end }}{{.Tuesday.N}} {{ end }}` +
-		`|{{ if eq .Wednesday.HolidayType 1 }} <font color="red">{{ if .Wednesday.IsThisMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else if eq .Wednesday.HolidayType 2 }} <font color="blue">{{ if .Wednesday.IsThisMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else }} {{ if .Wednesday.IsThisMonth }}<b>{{ end }}{{.Wednesday.N}} {{ end }}` +
-		`|{{ if eq .Thursday.HolidayType 1 }} <font color="red">{{ if .Thursday.IsThisMonth }}<b>{{ end }}{{.Thursday.N}}</font> {{ else if eq .Thursday.HolidayType 2 }} <font color="blue">{{ if .Thursday.IsThisMonth }}<b>{{ end }}{{.Thursday.N}}</font> {{ else }} {{ if .Thursday.IsThisMonth }}<b>{{ end }}{{.Thursday.N}} {{ end }}` +
-		`|{{ if eq .Friday.HolidayType 1 }} <font color="red">{{ if .Friday.IsThisMonth }}<b>{{ end }}{{.Friday.N}}</font> {{ else if eq .Friday.HolidayType 2 }} <font color="blue">{{ if .Friday.IsThisMonth }}<b>{{ end }}{{.Friday.N}}</font> {{ else }} {{ if .Friday.IsThisMonth }}<b>{{ end }}{{.Friday.N}} {{ end }}` +
-		`|{{ if eq .Saturday.HolidayType 1 }} <font color="red">{{ if .Saturday.IsThisMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else if eq .Saturday.HolidayType 2 }} <font color="blue">{{ if .Saturday.IsThisMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else }} {{ if .Saturday.IsThisMonth }}<b>{{ end }}{{.Saturday.N}} {{ end }}|`
+	calendarTitleJP  = `#### %d年%d月`
+	calendarHeaderJP = `|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|`
+	calendarSplit    = `|--|--|--|--|--|--|--|`
+	weekTemplate     = `|{{ if eq .Sunday.HolidayType 1 }} <font color="red">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else if eq .Sunday.HolidayType 2 }} <font color="blue">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else }} {{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}} {{ end }}` +
+		`|{{ if eq .Monday.HolidayType 1 }} <font color="red">{{ if .Monday.IsTargetMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else if eq .Monday.HolidayType 2 }} <font color="blue">{{ if .Monday.IsTargetMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else }} {{ if .Monday.IsTargetMonth }}<b>{{ end }}{{.Monday.N}} {{ end }}` +
+		`|{{ if eq .Tuesday.HolidayType 1 }} <font color="red">{{ if .Tuesday.IsTargetMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else if eq .Tuesday.HolidayType 2 }} <font color="blue">{{ if .Tuesday.IsTargetMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else }} {{ if .Tuesday.IsTargetMonth }}<b>{{ end }}{{.Tuesday.N}} {{ end }}` +
+		`|{{ if eq .Wednesday.HolidayType 1 }} <font color="red">{{ if .Wednesday.IsTargetMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else if eq .Wednesday.HolidayType 2 }} <font color="blue">{{ if .Wednesday.IsTargetMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else }} {{ if .Wednesday.IsTargetMonth }}<b>{{ end }}{{.Wednesday.N}} {{ end }}` +
+		`|{{ if eq .Thursday.HolidayType 1 }} <font color="red">{{ if .Thursday.IsTargetMonth }}<b>{{ end }}{{.Thursday.N}}</font> {{ else if eq .Thursday.HolidayType 2 }} <font color="blue">{{ if .Thursday.IsTargetMonth }}<b>{{ end }}{{.Thursday.N}}</font> {{ else }} {{ if .Thursday.IsTargetMonth }}<b>{{ end }}{{.Thursday.N}} {{ end }}` +
+		`|{{ if eq .Friday.HolidayType 1 }} <font color="red">{{ if .Friday.IsTargetMonth }}<b>{{ end }}{{.Friday.N}}</font> {{ else if eq .Friday.HolidayType 2 }} <font color="blue">{{ if .Friday.IsTargetMonth }}<b>{{ end }}{{.Friday.N}}</font> {{ else }} {{ if .Friday.IsTargetMonth }}<b>{{ end }}{{.Friday.N}} {{ end }}` +
+		`|{{ if eq .Saturday.HolidayType 1 }} <font color="red">{{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else if eq .Saturday.HolidayType 2 }} <font color="blue">{{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else }} {{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}} {{ end }}|`
 )
 
 func buildCalendar(date time.Time) (string, error) {
 	buf := &strings.Builder{}
-	_, err := buf.WriteString(fmt.Sprintf("#### %d年%d月\n", date.Year(), date.Month()))
+	_, err := buf.WriteString(fmt.Sprintf(calendarTitleJP+"\n", date.Year(), date.Month()))
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-	_, err = buf.WriteString(calendarHeader + "\n")
+	_, err = buf.WriteString(calendarHeaderJP + "\n")
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
@@ -98,14 +101,14 @@ func buildCalendar(date time.Time) (string, error) {
 		return "", errors.WithStack(err)
 	}
 
+	tmpl, err := template.New("week").Parse(weekTemplate)
+	if err != nil {
+		return "", errors.WithStack(err)
+	}
 	m := &month{targetMonth: date.Month()}
 	m.calculateWeeks(date)
-	for _, wk := range m.weeks {
-		tmpl, err := template.New("week").Parse(weekTemplate)
-		if err != nil {
-			return "", errors.WithStack(err)
-		}
-		if err := tmpl.Execute(buf, wk); err != nil {
+	for _, w := range m.weeks {
+		if err := tmpl.Execute(buf, w); err != nil {
 			return "", errors.WithStack(err)
 		}
 		_, err = buf.WriteString("\n")
@@ -118,97 +121,94 @@ func buildCalendar(date time.Time) (string, error) {
 }
 
 func (m *month) calculateWeeks(date time.Time) {
-	current := date
-	wk := m.calculateWeek(current)
-	weeks := []*week{wk}
+	w := m.calculateWeek(date)
+	weeks := []*week{w}
 
-	retreat := current
-	// currentの前月の最終週まで遡る
+	// dateの前月の最終週まで遡る
+	retreat := date
 	for {
 		retreat = retreat.AddDate(0, 0, -7)
-		if retreat.Month() != current.Month() {
-			wk := m.calculateWeek(retreat)
-			weeks = append([]*week{wk}, weeks...)
+		w := m.calculateWeek(retreat)
+		weeks = append([]*week{w}, weeks...)
+		if retreat.Month() != date.Month() {
 			break
 		}
-		wk := m.calculateWeek(retreat)
-		weeks = append([]*week{wk}, weeks...)
 	}
 
-	// currentの次月の初週まで進む
-	advance := current
+	// dateの次月の初週まで進む
+	advance := date
 	for {
 		advance = advance.AddDate(0, 0, 7)
-		if advance.Month() != current.Month() {
-			wk := m.calculateWeek(advance)
-			weeks = append(weeks, wk)
+		w := m.calculateWeek(advance)
+		weeks = append(weeks, w)
+		if advance.Month() != date.Month() {
 			break
 		}
-		wk := m.calculateWeek(advance)
-		weeks = append(weeks, wk)
 	}
 
 	m.weeks = weeks
 }
 
-func (m *month) calculateWeek(point time.Time) *week {
-	wk := &week{targetMonth: m.targetMonth}
-	// pointの週の日曜日まで遡る
-	retreat := point
+func (m *month) calculateWeek(date time.Time) *week {
+	w := &week{targetMonth: m.targetMonth}
+	// dateの週の日曜日まで遡る
+	retreat := date
 	for {
-		wk.calculateDay(retreat)
+		w.calculateDay(retreat)
 		if retreat.Weekday() == time.Sunday {
 			break
 		}
 		retreat = retreat.AddDate(0, 0, -1)
 	}
 
-	// pointの週の土曜日まで進む
-	advance := point
+	// dateの週の土曜日まで進む
+	advance := date
 	for {
-		wk.calculateDay(advance)
+		w.calculateDay(advance)
 		if advance.Weekday() == time.Saturday {
 			break
 		}
 		advance = advance.AddDate(0, 0, 1)
 	}
-	return wk
+	return w
 }
 
-func (wk *week) calculateDay(date time.Time) {
+func (w *week) calculateDay(date time.Time) {
 	day := &Day{
-		N:           uint(date.Day()),
-		IsThisMonth: date.Month() == wk.targetMonth,
-		HolidayType: calculateHoliday(date),
+		N:             uint(date.Day()),
+		IsTargetMonth: date.Month() == w.targetMonth,
 	}
+	day.calculateHoliday(date)
 
 	switch date.Weekday() {
 	case time.Sunday:
-		wk.Sunday = day
+		w.Sunday = day
 	case time.Monday:
-		wk.Monday = day
+		w.Monday = day
 	case time.Tuesday:
-		wk.Tuesday = day
+		w.Tuesday = day
 	case time.Wednesday:
-		wk.Wednesday = day
+		w.Wednesday = day
 	case time.Thursday:
-		wk.Thursday = day
+		w.Thursday = day
 	case time.Friday:
-		wk.Friday = day
+		w.Friday = day
 	case time.Saturday:
-		wk.Saturday = day
+		w.Saturday = day
 	}
 }
 
-func calculateHoliday(date time.Time) holidayType {
-	if goholiday.IsNationalHoliday(date) {
-		return RedHoliday
+func (d *Day) calculateHoliday(date time.Time) {
+	var hType holidayType
+	switch {
+	case goholiday.IsNationalHoliday(date):
+		hType = RedHoliday
+	case date.Weekday() == time.Sunday:
+		hType = RedHoliday
+	case date.Weekday() == time.Saturday:
+		hType = BlueHoliday
+	default:
+		hType = NotHoliday
 	}
-	if date.Weekday() == time.Sunday {
-		return RedHoliday
-	}
-	if date.Weekday() == time.Saturday {
-		return BlueHoliday
-	}
-	return NotHoliday
+	d.HolidayType = hType
 }
