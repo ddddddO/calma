@@ -7,7 +7,7 @@ Inspired by [jpcal](https://github.com/y-yagi/jpcal)<br>
 
 ```console
 16:55:37 > calma -h
-This CLI outputs Japanese calendar. It supports national holidays.
+This CLI outputs Japanese calendar in Markdown. It supports national holidays.
 
 Usage of calma:
   -a int

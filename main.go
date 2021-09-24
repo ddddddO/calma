@@ -47,7 +47,7 @@ var jst = time.FixedZone("JST", +9*60*60)
 
 func main() {
 	flag.Usage = func() {
-		usage := "This CLI outputs Japanese calendar. It supports national holidays.\n\nUsage of %s:\n"
+		usage := "This CLI outputs Japanese calendar in Markdown. It supports national holidays.\n\nUsage of %s:\n"
 		fmt.Fprintf(flag.CommandLine.Output(), usage, os.Args[0])
 		flag.PrintDefaults()
 	}
