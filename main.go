@@ -129,7 +129,6 @@ func (m *month) calculateWeeks(date time.Time) {
 	w := m.calculateWeek(date)
 	weeks := []*week{w}
 
-	// dateの前月の最終週まで遡る
 	retreat := date
 	for {
 		retreat = retreat.AddDate(0, 0, -7)
@@ -140,7 +139,6 @@ func (m *month) calculateWeeks(date time.Time) {
 		}
 	}
 
-	// dateの次月の初週まで進む
 	advance := date
 	for {
 		advance = advance.AddDate(0, 0, 7)
