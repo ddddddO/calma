@@ -202,7 +202,7 @@ func (w *week) calculateDay(date time.Time) {
 }
 
 func (d *day) calculateHoliday(date time.Time) {
-	var hType holidayType
+	hType := notHoliday
 	switch {
 	case holiday.IsHoliday(date):
 		hType = redHoliday
@@ -210,8 +210,6 @@ func (d *day) calculateHoliday(date time.Time) {
 		hType = redHoliday
 	case date.Weekday() == time.Saturday:
 		hType = blueHoliday
-	default:
-		hType = notHoliday
 	}
 	d.HolidayType = hType
 }
