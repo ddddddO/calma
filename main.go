@@ -79,10 +79,10 @@ func main() {
 }
 
 const (
-	calendarTitleJP  = `#### %d年%d月`
-	calendarHeaderJP = `|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|`
-	calendarSplit    = `|--|--|--|--|--|--|--|`
-	weekTemplate     = `|{{ if eq .Sunday.HolidayType 1 }} <font color="red">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else if eq .Sunday.HolidayType 2 }} <font color="blue">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else }} {{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}} {{ end }}` +
+	titleJP      = `#### %d年%d月`
+	headerJP     = `|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|`
+	splitLine    = `|--|--|--|--|--|--|--|`
+	weekTemplate = `|{{ if eq .Sunday.HolidayType 1 }} <font color="red">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else if eq .Sunday.HolidayType 2 }} <font color="blue">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else }} {{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}} {{ end }}` +
 		`|{{ if eq .Monday.HolidayType 1 }} <font color="red">{{ if .Monday.IsTargetMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else if eq .Monday.HolidayType 2 }} <font color="blue">{{ if .Monday.IsTargetMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else }} {{ if .Monday.IsTargetMonth }}<b>{{ end }}{{.Monday.N}} {{ end }}` +
 		`|{{ if eq .Tuesday.HolidayType 1 }} <font color="red">{{ if .Tuesday.IsTargetMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else if eq .Tuesday.HolidayType 2 }} <font color="blue">{{ if .Tuesday.IsTargetMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else }} {{ if .Tuesday.IsTargetMonth }}<b>{{ end }}{{.Tuesday.N}} {{ end }}` +
 		`|{{ if eq .Wednesday.HolidayType 1 }} <font color="red">{{ if .Wednesday.IsTargetMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else if eq .Wednesday.HolidayType 2 }} <font color="blue">{{ if .Wednesday.IsTargetMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else }} {{ if .Wednesday.IsTargetMonth }}<b>{{ end }}{{.Wednesday.N}} {{ end }}` +
@@ -93,15 +93,15 @@ const (
 
 func buildCalendar(date time.Time) (string, error) {
 	buf := &strings.Builder{}
-	_, err := buf.WriteString(fmt.Sprintf(calendarTitleJP+"\n", date.Year(), date.Month()))
+	_, err := buf.WriteString(fmt.Sprintf(titleJP+"\n", date.Year(), date.Month()))
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-	_, err = buf.WriteString(calendarHeaderJP + "\n")
+	_, err = buf.WriteString(headerJP + "\n")
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
-	_, err = buf.WriteString(calendarSplit + "\n")
+	_, err = buf.WriteString(splitLine + "\n")
 	if err != nil {
 		return "", errors.WithStack(err)
 	}
