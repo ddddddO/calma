@@ -32,13 +32,20 @@ Markdown output image<br>
 
 ## Installation
 
-go version is 1.16 or higher
+go version is 1.16 or higher.
 
-```sh
+```console
 go install github.com/ddddddO/calma@latest
 ```
 
-go version is 1.15 or less
-```
+go version is 1.15 or less.
+```console
 go get github.com/ddddddO/calma
 ```
+
+or using Homebrew.
+```console
+brew install ddddddO/tap/calma
+```
+
+**or, download binary from [here](https://github.com/ddddddO/calma/releases).**

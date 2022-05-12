@@ -1,0 +1,2 @@
+credit:
+	gocredits . > CREDITS
