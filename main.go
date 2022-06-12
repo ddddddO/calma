@@ -119,9 +119,7 @@ func (c *calendar) build() error {
 		return errors.WithStack(err)
 	}
 	c.calculate()
-	c.render()
-
-	return nil
+	return errors.WithStack(c.render())
 }
 
 const (
@@ -148,7 +146,7 @@ func (c *calendar) buildHeader() error {
 }
 
 func (c *calendar) calculate() {
-	c.month.calculateWeeks(c.target, c.target.Month())
+	c.month.calculateWeeks(c.target)
 }
 
 func (c *calendar) render() error {
@@ -165,9 +163,9 @@ func (c *calendar) render() error {
 	return nil
 }
 
-func (m *month) calculateWeeks(targetDate time.Time, targetMonth time.Month) {
-	w := m.calculateWeek(targetDate, targetMonth)
-	weeks := []*week{w}
+func (m *month) calculateWeeks(targetDate time.Time) {
+	targetMonth := targetDate.Month()
+	weeks := []*week{m.calculateWeek(targetDate, targetMonth)}
 
 	retreat := targetDate
 	for {
