@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBuildCalendar(t *testing.T) {
+func TestBuild_Calendar(t *testing.T) {
 	tests := []struct {
 		name string
 		date time.Time
@@ -75,7 +75,10 @@ func TestBuildCalendar(t *testing.T) {
 	for _, tt := range tests {
 		t.Log(tt.name)
 
-		got, err := buildCalendar(tt.date)
+		calendar, err := newCalendar(tt.date)
+		assert.NoError(t, err)
+
+		got, err := calendar.build()
 		if assert.NoError(t, err) {
 			assert.Equal(t, got, tt.want)
 		}
