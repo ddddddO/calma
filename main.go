@@ -15,8 +15,8 @@ import (
 type calendar struct {
 	format *template.Template
 	target time.Time
-
-	month *month
+	month  *month
+	buf    *strings.Builder
 }
 
 func newCalendar(target time.Time) (*calendar, error) {
@@ -29,7 +29,12 @@ func newCalendar(target time.Time) (*calendar, error) {
 		format: tmpl,
 		target: target,
 		month:  &month{},
+		buf:    &strings.Builder{},
 	}, nil
+}
+
+func (c *calendar) String() string {
+	return c.buf.String()
 }
 
 const (
@@ -101,24 +106,22 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	ret, err := calendar.build()
-	if err != nil {
+	if err := calendar.build(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
-	fmt.Print(ret)
+	fmt.Print(calendar)
 }
 
-func (c *calendar) build() (string, error) {
-	buf := &strings.Builder{}
-	if err := c.buildHeader(buf); err != nil {
-		return "", errors.WithStack(err)
+func (c *calendar) build() error {
+	if err := c.buildHeader(); err != nil {
+		return errors.WithStack(err)
 	}
 	c.calculate()
-	c.render(buf)
+	c.render()
 
-	return buf.String(), nil
+	return nil
 }
 
 const (
@@ -127,16 +130,16 @@ const (
 	partition = `|--|--|--|--|--|--|--|`
 )
 
-func (c *calendar) buildHeader(buf *strings.Builder) error {
-	_, err := buf.WriteString(fmt.Sprintf(titleJP+"\n", c.target.Year(), c.target.Month()))
+func (c *calendar) buildHeader() error {
+	_, err := c.buf.WriteString(fmt.Sprintf(titleJP+"\n", c.target.Year(), c.target.Month()))
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	_, err = buf.WriteString(headerJP + "\n")
+	_, err = c.buf.WriteString(headerJP + "\n")
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	_, err = buf.WriteString(partition + "\n")
+	_, err = c.buf.WriteString(partition + "\n")
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -148,12 +151,12 @@ func (c *calendar) calculate() {
 	c.month.calculateWeeks(c.target, c.target.Month())
 }
 
-func (c *calendar) render(buf *strings.Builder) error {
+func (c *calendar) render() error {
 	for _, w := range c.month.weeks {
-		if err := c.format.Execute(buf, w); err != nil {
+		if err := c.format.Execute(c.buf, w); err != nil {
 			return errors.WithStack(err)
 		}
-		_, err := buf.WriteString("\n")
+		_, err := c.buf.WriteString("\n")
 		if err != nil {
 			return errors.WithStack(err)
 		}

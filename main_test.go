@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -78,9 +79,10 @@ func TestBuild_Calendar(t *testing.T) {
 		calendar, err := newCalendar(tt.date)
 		assert.NoError(t, err)
 
-		got, err := calendar.build()
-		if assert.NoError(t, err) {
-			assert.Equal(t, got, tt.want)
-		}
+		err = calendar.build()
+		assert.NoError(t, err)
+
+		got := fmt.Sprint(calendar)
+		assert.Equal(t, tt.want, got)
 	}
 }
