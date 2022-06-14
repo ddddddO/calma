@@ -164,53 +164,75 @@ func (c *calendar) render() error {
 
 func (m *month) calculateWeeks(targetDate time.Time) {
 	targetMonth := targetDate.Month()
-	weeks := []*week{m.calculateWeek(targetDate, targetMonth)}
 
-	retreat := targetDate
-	for {
-		retreat = retreat.AddDate(0, 0, -7)
-		w := m.calculateWeek(retreat, targetMonth)
-		weeks = append([]*week{w}, weeks...)
-		if retreat.Month() != targetDate.Month() {
-			break
+	retWeeks := make(chan []*week, 1)
+	go func() {
+		retreat := targetDate
+		weeks := []*week{m.calculateWeek(targetDate, targetMonth)}
+		for {
+			retreat = retreat.AddDate(0, 0, -7)
+			w := m.calculateWeek(retreat, targetMonth)
+			weeks = append([]*week{w}, weeks...)
+			if retreat.Month() != targetDate.Month() {
+				break
+			}
 		}
-	}
+		retWeeks <- weeks
+	}()
 
-	advance := targetDate
-	for {
-		advance = advance.AddDate(0, 0, 7)
-		w := m.calculateWeek(advance, targetMonth)
-		weeks = append(weeks, w)
-		if advance.Month() != targetDate.Month() {
-			break
+	advWeeks := make(chan []*week, 1)
+	go func() {
+		advance := targetDate
+		weeks := []*week{}
+		for {
+			advance = advance.AddDate(0, 0, 7)
+			w := m.calculateWeek(advance, targetMonth)
+			weeks = append(weeks, w)
+			if advance.Month() != targetDate.Month() {
+				break
+			}
 		}
-	}
+		advWeeks <- weeks
+	}()
 
-	m.weeks = weeks
+	ret := <-retWeeks
+	adv := <-advWeeks
+
+	m.weeks = append(ret, adv...)
 }
 
 func (m *month) calculateWeek(date time.Time, targetMonth time.Month) *week {
 	w := &week{}
+	done := make(chan struct{}, 2)
 
-	// dateの週の日曜日まで遡る
-	retreat := date
-	for {
-		w.calculateDay(retreat, targetMonth)
-		if retreat.Weekday() == time.Sunday {
-			break
+	go func() {
+		// dateの週の日曜日まで遡る
+		retreat := date
+		for {
+			w.calculateDay(retreat, targetMonth)
+			if retreat.Weekday() == time.Sunday {
+				break
+			}
+			retreat = retreat.AddDate(0, 0, -1)
 		}
-		retreat = retreat.AddDate(0, 0, -1)
-	}
+		done <- struct{}{}
+	}()
 
-	// dateの週の土曜日まで進む
-	advance := date
-	for {
-		w.calculateDay(advance, targetMonth)
-		if advance.Weekday() == time.Saturday {
-			break
+	go func() {
+		// dateの週の土曜日まで進む
+		advance := date
+		for {
+			advance = advance.AddDate(0, 0, 1)
+			w.calculateDay(advance, targetMonth)
+			if advance.Weekday() == time.Saturday {
+				break
+			}
 		}
-		advance = advance.AddDate(0, 0, 1)
-	}
+		done <- struct{}{}
+	}()
+
+	<-done
+	<-done
 
 	return w
 }
