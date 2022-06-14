@@ -28,7 +28,7 @@ func TestBuild_Calendar(t *testing.T) {
 				`| <font color="red"><b>26</font> | <b>27 | <b>28 | <b>29 | <b>30 | 1 | <font color="blue">2</font> |` + "\n",
 		},
 		{
-			name: "succeeded(target Saturday)",
+			name: "succeeded(Saturday)",
 			date: time.Date(2022, time.June, 18, 8, 0, 0, 0, jst),
 			want: `#### 2022年6月` + "\n" +
 				`|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|` + "\n" +
@@ -41,7 +41,7 @@ func TestBuild_Calendar(t *testing.T) {
 				`| <font color="red"><b>26</font> | <b>27 | <b>28 | <b>29 | <b>30 | 1 | <font color="blue">2</font> |` + "\n",
 		},
 		{
-			name: "succeeded(target Sunday)",
+			name: "succeeded(Sunday)",
 			date: time.Date(2022, time.June, 19, 8, 0, 0, 0, jst),
 			want: `#### 2022年6月` + "\n" +
 				`|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|` + "\n" +
@@ -55,7 +55,7 @@ func TestBuild_Calendar(t *testing.T) {
 		},
 		{
 			// ref: https://www.kantei.go.jp/jp/headline/tokyo2020/shukujitsu.html
-			name: "succeeded(July)",
+			name: "succeeded(July, 1)",
 			date: time.Date(2021, time.July, 1, 0, 0, 0, 0, jst),
 			want: `#### 2021年7月` + "\n" +
 				`|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|` + "\n" +
@@ -70,8 +70,8 @@ func TestBuild_Calendar(t *testing.T) {
 		},
 		{
 			// ref: https://www.kantei.go.jp/jp/headline/tokyo2020/shukujitsu.html
-			name: "succeeded(October)",
-			date: time.Date(2021, time.October, 24, 0, 0, 0, 0, jst), // NOTE: 10/1だとこける。actualとの差分はないはずだけど。
+			name: "succeeded(October, 31)",
+			date: time.Date(2021, time.October, 31, 0, 0, 0, 0, jst), // NOTE: 10/1だとこける。actualとの差分はないはずだけど。
 			want: `#### 2021年10月` + "\n" +
 				`|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|` + "\n" +
 				`|--|--|--|--|--|--|--|` + "\n" +
