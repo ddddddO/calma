@@ -123,17 +123,17 @@ func (c *calendar) build() error {
 }
 
 const (
-	titleJP   = `#### %d年%d月`
-	headerJP  = `|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|`
+	title     = `#### %d年%d月`
+	header    = `|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|`
 	partition = `|--|--|--|--|--|--|--|`
 )
 
 func (c *calendar) buildHeader() error {
-	_, err := c.buf.WriteString(fmt.Sprintf(titleJP+"\n", c.target.Year(), c.target.Month()))
+	_, err := c.buf.WriteString(fmt.Sprintf(title+"\n", c.target.Year(), c.target.Month()))
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	_, err = c.buf.WriteString(headerJP + "\n")
+	_, err = c.buf.WriteString(header + "\n")
 	if err != nil {
 		return errors.WithStack(err)
 	}
