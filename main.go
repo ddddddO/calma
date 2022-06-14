@@ -13,10 +13,10 @@ import (
 )
 
 type calendar struct {
-	format *template.Template
-	target time.Time
-	month  *month
-	buf    *strings.Builder
+	weekTemplate *template.Template
+	target       time.Time
+	month        *month
+	buf          *strings.Builder
 }
 
 func newCalendar(target time.Time) (*calendar, error) {
@@ -26,10 +26,10 @@ func newCalendar(target time.Time) (*calendar, error) {
 	}
 
 	return &calendar{
-		format: tmpl,
-		target: target,
-		month:  &month{},
-		buf:    &strings.Builder{},
+		weekTemplate: tmpl,
+		target:       target,
+		month:        &month{},
+		buf:          &strings.Builder{},
 	}, nil
 }
 
@@ -151,7 +151,7 @@ func (c *calendar) calculate() {
 
 func (c *calendar) render() error {
 	for _, w := range c.month.weeks {
-		if err := c.format.Execute(c.buf, w); err != nil {
+		if err := c.weekTemplate.Execute(c.buf, w); err != nil {
 			return errors.WithStack(err)
 		}
 		_, err := c.buf.WriteString("\n")
