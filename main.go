@@ -154,8 +154,7 @@ func (c *calendar) render() error {
 		if err := c.weekTemplate.Execute(c.buf, w); err != nil {
 			return errors.WithStack(err)
 		}
-		_, err := c.buf.WriteString("\n")
-		if err != nil {
+		if _, err := c.buf.WriteString("\n"); err != nil {
 			return errors.WithStack(err)
 		}
 	}
