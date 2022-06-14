@@ -222,11 +222,11 @@ func (m *month) calculateWeek(date time.Time, targetMonth time.Month) *week {
 		// dateの週の土曜日まで進む
 		advance := date
 		for {
-			advance = advance.AddDate(0, 0, 1)
-			w.calculateDay(advance, targetMonth)
 			if advance.Weekday() == time.Saturday {
 				break
 			}
+			advance = advance.AddDate(0, 0, 1)
+			w.calculateDay(advance, targetMonth)
 		}
 		done <- struct{}{}
 	}()
