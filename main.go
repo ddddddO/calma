@@ -1,22 +1,24 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"os"
-	"strings"
+	"sync"
 	"text/template"
 	"time"
 
 	holiday "github.com/holiday-jp/holiday_jp-go"
 	"github.com/pkg/errors"
+	"golang.org/x/sync/errgroup"
 )
 
 type calendar struct {
 	weekTemplate *template.Template
 	target       time.Time
 	month        *month
-	buf          *strings.Builder
+	buf          *bytes.Buffer
 }
 
 func newCalendar(target time.Time) (*calendar, error) {
@@ -29,7 +31,7 @@ func newCalendar(target time.Time) (*calendar, error) {
 		weekTemplate: tmpl,
 		target:       target,
 		month:        &month{},
-		buf:          &strings.Builder{},
+		buf:          &bytes.Buffer{},
 	}, nil
 }
 
@@ -150,12 +152,33 @@ func (c *calendar) calculate() {
 }
 
 func (c *calendar) render() error {
-	for _, w := range c.month.weeks {
-		if err := c.weekTemplate.Execute(c.buf, w); err != nil {
-			return errors.WithStack(err)
-		}
-		if _, err := c.buf.WriteString("\n"); err != nil {
-			return errors.WithStack(err)
+	m := sync.Map{}
+	eg := errgroup.Group{}
+	for i, w := range c.month.weeks {
+		i, w := i, w
+		eg.Go(func() error {
+			buf := &bytes.Buffer{}
+			if err := c.weekTemplate.Execute(buf, w); err != nil {
+				return errors.WithStack(err)
+			}
+			if _, err := buf.WriteString("\n"); err != nil {
+				return errors.WithStack(err)
+			}
+
+			m.Store(i, buf)
+			return nil
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return errors.WithStack(err)
+	}
+
+	for i := 0; i < len(c.month.weeks); i++ {
+		if v, ok := m.Load(i); ok {
+			b := v.(*bytes.Buffer)
+			if _, err := b.WriteTo(c.buf); err != nil {
+				return errors.WithStack(err)
+			}
 		}
 	}
 
