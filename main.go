@@ -10,8 +10,8 @@ import (
 	"time"
 
 	holiday "github.com/holiday-jp/holiday_jp-go"
-	"github.com/pkg/errors"
 	"golang.org/x/sync/errgroup"
+	"golang.org/x/xerrors"
 )
 
 type calendar struct {
@@ -24,7 +24,7 @@ type calendar struct {
 func newCalendar(target time.Time) (*calendar, error) {
 	tmpl, err := template.New("week").Parse(weekTemplate)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, xerrors.Errorf("failed to template.New: %w", err)
 	}
 
 	return &calendar{
@@ -91,7 +91,7 @@ func main() {
 	flag.Parse()
 
 	if retreat != 0 && advance != 0 {
-		fmt.Fprintln(os.Stderr, errors.New("Please use either"))
+		fmt.Fprintln(os.Stderr, xerrors.New("Please use either"))
 		os.Exit(1)
 	}
 
@@ -105,11 +105,11 @@ func main() {
 
 	calendar, err := newCalendar(targetDate)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, xerrors.Errorf("%+v", err))
 		os.Exit(1)
 	}
 	if err := calendar.build(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, xerrors.Errorf("%+v", err))
 		os.Exit(1)
 	}
 
@@ -118,10 +118,15 @@ func main() {
 
 func (c *calendar) build() error {
 	if err := c.buildHeader(); err != nil {
-		return errors.WithStack(err)
+		return xerrors.Errorf("failed to buildHeader: %w", err)
 	}
+
 	c.calculate()
-	return errors.WithStack(c.render())
+
+	if err := c.render(); err != nil {
+		return xerrors.Errorf("failed to render: %w", err)
+	}
+	return nil
 }
 
 const (
@@ -131,17 +136,19 @@ const (
 )
 
 func (c *calendar) buildHeader() error {
+	const failedMsg = "failed to WriteString: %w"
+
 	_, err := c.buf.WriteString(fmt.Sprintf(title+"\n", c.target.Year(), c.target.Month()))
 	if err != nil {
-		return errors.WithStack(err)
+		return xerrors.Errorf(failedMsg, err)
 	}
 	_, err = c.buf.WriteString(header + "\n")
 	if err != nil {
-		return errors.WithStack(err)
+		return xerrors.Errorf(failedMsg, err)
 	}
 	_, err = c.buf.WriteString(partition + "\n")
 	if err != nil {
-		return errors.WithStack(err)
+		return xerrors.Errorf(failedMsg, err)
 	}
 
 	return nil
@@ -159,10 +166,10 @@ func (c *calendar) render() error {
 		eg.Go(func() error {
 			buf := &bytes.Buffer{}
 			if err := c.weekTemplate.Execute(buf, w); err != nil {
-				return errors.WithStack(err)
+				return xerrors.Errorf("failed to template.Execute: %w", err)
 			}
 			if _, err := buf.WriteString("\n"); err != nil {
-				return errors.WithStack(err)
+				return xerrors.Errorf("failed to WriteString: %w", err)
 			}
 
 			m.Store(i, buf)
@@ -170,14 +177,14 @@ func (c *calendar) render() error {
 		})
 	}
 	if err := eg.Wait(); err != nil {
-		return errors.WithStack(err)
+		return xerrors.Errorf("failed: %w", err)
 	}
 
 	for i := 0; i < len(c.month.weeks); i++ {
 		if v, ok := m.Load(i); ok {
 			b := v.(*bytes.Buffer)
 			if _, err := b.WriteTo(c.buf); err != nil {
-				return errors.WithStack(err)
+				return xerrors.Errorf("failed to WriteTo: %w", err)
 			}
 		}
 	}
