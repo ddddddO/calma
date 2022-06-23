@@ -1,6 +1,7 @@
 # <font color="red">cal</font><font color="blue">ma</font>
 Calendar for Markdown<br>
 Inspired by [jpcal](https://github.com/y-yagi/jpcal)<br>
+Can be used with [esa](https://esa.io/)<br>
 &#x26a0;Only for Japan&#x26a0;
 
 ## Usage
