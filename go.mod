@@ -11,6 +11,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.0 // indirect
+	github.com/gomarkdown/markdown v0.0.0-20220607163217-45f7c050e2d1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rakyll/statik v0.1.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
