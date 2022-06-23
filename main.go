@@ -9,6 +9,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/gomarkdown/markdown"
 	holiday "github.com/holiday-jp/holiday_jp-go"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/xerrors"
@@ -25,6 +26,8 @@ func main() {
 	var retreat, advance int
 	flag.IntVar(&retreat, "r", 0, "Number of months to retreat")
 	flag.IntVar(&advance, "a", 0, "Number of months to advance")
+	var isHTML bool
+	flag.BoolVar(&isHTML, "html", false, "Output html")
 	flag.Parse()
 
 	if retreat != 0 && advance != 0 {
@@ -50,17 +53,22 @@ func main() {
 		os.Exit(1)
 	}
 
+	if isHTML {
+		html := calendar.html()
+		fmt.Print(html)
+		return
+	}
 	fmt.Print(calendar)
 }
 
 const (
-	weekTemplate = `|{{ if eq .Sunday.HolidayType 1 }} <font color="red">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else if eq .Sunday.HolidayType 2 }} <font color="blue">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else }} {{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}} {{ end }}` +
+	weekTemplate = `{{ if eq .Sunday.HolidayType 1 }} <font color="red">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else if eq .Sunday.HolidayType 2 }} <font color="blue">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else }} {{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}} {{ end }}` +
 		`|{{ if eq .Monday.HolidayType 1 }} <font color="red">{{ if .Monday.IsTargetMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else if eq .Monday.HolidayType 2 }} <font color="blue">{{ if .Monday.IsTargetMonth }}<b>{{ end }}{{.Monday.N}}</font> {{ else }} {{ if .Monday.IsTargetMonth }}<b>{{ end }}{{.Monday.N}} {{ end }}` +
 		`|{{ if eq .Tuesday.HolidayType 1 }} <font color="red">{{ if .Tuesday.IsTargetMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else if eq .Tuesday.HolidayType 2 }} <font color="blue">{{ if .Tuesday.IsTargetMonth }}<b>{{ end }}{{.Tuesday.N}}</font> {{ else }} {{ if .Tuesday.IsTargetMonth }}<b>{{ end }}{{.Tuesday.N}} {{ end }}` +
 		`|{{ if eq .Wednesday.HolidayType 1 }} <font color="red">{{ if .Wednesday.IsTargetMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else if eq .Wednesday.HolidayType 2 }} <font color="blue">{{ if .Wednesday.IsTargetMonth }}<b>{{ end }}{{.Wednesday.N}}</font> {{ else }} {{ if .Wednesday.IsTargetMonth }}<b>{{ end }}{{.Wednesday.N}} {{ end }}` +
 		`|{{ if eq .Thursday.HolidayType 1 }} <font color="red">{{ if .Thursday.IsTargetMonth }}<b>{{ end }}{{.Thursday.N}}</font> {{ else if eq .Thursday.HolidayType 2 }} <font color="blue">{{ if .Thursday.IsTargetMonth }}<b>{{ end }}{{.Thursday.N}}</font> {{ else }} {{ if .Thursday.IsTargetMonth }}<b>{{ end }}{{.Thursday.N}} {{ end }}` +
 		`|{{ if eq .Friday.HolidayType 1 }} <font color="red">{{ if .Friday.IsTargetMonth }}<b>{{ end }}{{.Friday.N}}</font> {{ else if eq .Friday.HolidayType 2 }} <font color="blue">{{ if .Friday.IsTargetMonth }}<b>{{ end }}{{.Friday.N}}</font> {{ else }} {{ if .Friday.IsTargetMonth }}<b>{{ end }}{{.Friday.N}} {{ end }}` +
-		`|{{ if eq .Saturday.HolidayType 1 }} <font color="red">{{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else if eq .Saturday.HolidayType 2 }} <font color="blue">{{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else }} {{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}} {{ end }}|`
+		`|{{ if eq .Saturday.HolidayType 1 }} <font color="red">{{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else if eq .Saturday.HolidayType 2 }} <font color="blue">{{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else }} {{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}} {{ end }}`
 )
 
 type calendar struct {
@@ -86,6 +94,12 @@ func newCalendar(target time.Time) (*calendar, error) {
 
 func (c *calendar) String() string {
 	return c.buf.String()
+}
+
+func (c *calendar) html() string {
+	md := []byte(c.String())
+	html := markdown.ToHTML(md, nil, nil)
+	return string(html)
 }
 
 type month struct {
@@ -131,8 +145,8 @@ func (c *calendar) build() error {
 
 const (
 	title     = `#### %d年%d月`
-	header    = `|<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>|`
-	partition = `|--|--|--|--|--|--|--|`
+	header    = `<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>`
+	partition = `--------|--------|--------|--------|--------|--------|--------`
 )
 
 func (c *calendar) buildHeader() error {
