@@ -194,7 +194,7 @@ func (c *calendar) render() error {
 		return xerrors.Errorf("failed: %w", err)
 	}
 
-	for i := 0; i < len(c.month.weeks); i++ {
+	for i := range c.month.weeks {
 		if v, ok := m.Load(i); ok {
 			b := v.(*bytes.Buffer)
 			if _, err := b.WriteTo(c.buf); err != nil {
