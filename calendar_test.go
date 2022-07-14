@@ -1,4 +1,4 @@
-package main
+package calma
 
 import (
 	"fmt"
@@ -8,6 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
+
+var jst = time.FixedZone("JST", +9*60*60)
 
 func TestString(t *testing.T) {
 	tests := []struct {
@@ -89,10 +91,7 @@ func TestString(t *testing.T) {
 	for _, tt := range tests {
 		t.Log(tt.name)
 
-		calendar, err := newCalendar(tt.date)
-		assert.NoError(t, err)
-
-		err = calendar.build()
+		calendar, err := NewCalendar(tt.date)
 		assert.NoError(t, err)
 
 		got := fmt.Sprint(calendar)
@@ -204,13 +203,10 @@ func TestHTML(t *testing.T) {
 	for _, tt := range tests {
 		t.Log(tt.name)
 
-		calendar, err := newCalendar(tt.date)
+		calendar, err := NewCalendar(tt.date)
 		assert.NoError(t, err)
 
-		err = calendar.build()
-		assert.NoError(t, err)
-
-		got := calendar.html()
+		got := calendar.HTML()
 		assert.Equal(t, tt.want, got)
 	}
 }
