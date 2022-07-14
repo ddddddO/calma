@@ -17,8 +17,6 @@ jobs:
           go-version: 1.18
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
-        builds:
-          - main: ./cmd/calma/
         with:
           version: latest
           args: release --rm-dist
