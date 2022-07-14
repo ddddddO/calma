@@ -1,4 +1,7 @@
 # <font color="red">cal</font><font color="blue">ma</font>
+
+[![GitHub release](https://img.shields.io/github/release/ddddddO/calma.svg)](https://github.com/ddddddO/calma/releases) [![Go Reference](https://pkg.go.dev/badge/github.com/ddddddO/calma)](https://pkg.go.dev/github.com/ddddddO/calma) [![ci](https://github.com/ddddddO/calma/actions/workflows/ci.yaml/badge.svg)](https://github.com/ddddddO/calma/actions/workflows/ci.yaml)
+
 Calendar for Markdown<br>
 Inspired by [jpcal](https://github.com/y-yagi/jpcal)<br>
 Can be used with [esa](https://esa.io/)<br>
