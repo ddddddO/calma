@@ -1,10 +1,8 @@
-package main
+package calma
 
 import (
 	"bytes"
-	"flag"
 	"fmt"
-	"os"
 	"sync"
 	"text/template"
 	"time"
@@ -14,52 +12,6 @@ import (
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/xerrors"
 )
-
-var jst = time.FixedZone("JST", +9*60*60)
-
-func main() {
-	flag.Usage = func() {
-		usage := "This CLI outputs Japanese calendar in Markdown. It supports national holidays.\n\nUsage of %s:\n"
-		fmt.Fprintf(flag.CommandLine.Output(), usage, os.Args[0])
-		flag.PrintDefaults()
-	}
-	var retreat, advance int
-	flag.IntVar(&retreat, "r", 0, "Number of months to retreat")
-	flag.IntVar(&advance, "a", 0, "Number of months to advance")
-	var isHTML bool
-	flag.BoolVar(&isHTML, "html", false, "Output html")
-	flag.Parse()
-
-	if retreat != 0 && advance != 0 {
-		fmt.Fprintln(os.Stderr, xerrors.New("Please use either"))
-		os.Exit(1)
-	}
-
-	targetDate := time.Now().In(jst)
-	if retreat != 0 {
-		targetDate = targetDate.AddDate(0, -retreat, 0)
-	}
-	if advance != 0 {
-		targetDate = targetDate.AddDate(0, advance, 0)
-	}
-
-	calendar, err := newCalendar(targetDate)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, xerrors.Errorf("%+v", err))
-		os.Exit(1)
-	}
-	if err := calendar.build(); err != nil {
-		fmt.Fprintln(os.Stderr, xerrors.Errorf("%+v", err))
-		os.Exit(1)
-	}
-
-	if isHTML {
-		html := calendar.html()
-		fmt.Print(html)
-		return
-	}
-	fmt.Print(calendar)
-}
 
 const (
 	weekTemplate = `{{ if eq .Sunday.HolidayType 1 }} <font color="red">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else if eq .Sunday.HolidayType 2 }} <font color="blue">{{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}}</font> {{ else }} {{ if .Sunday.IsTargetMonth }}<b>{{ end }}{{.Sunday.N}} {{ end }}` +
@@ -78,25 +30,31 @@ type calendar struct {
 	buf          *bytes.Buffer
 }
 
-func newCalendar(target time.Time) (*calendar, error) {
+func NewCalendar(target time.Time) (*calendar, error) {
 	tmpl, err := template.New("week").Parse(weekTemplate)
 	if err != nil {
 		return nil, xerrors.Errorf("failed to template.New: %w", err)
 	}
 
-	return &calendar{
+	c := &calendar{
 		weekTemplate: tmpl,
 		target:       target,
 		month:        &month{},
 		buf:          &bytes.Buffer{},
-	}, nil
+	}
+
+	if err := c.build(); err != nil {
+		return nil, xerrors.Errorf("failed to build calendar: %w", err)
+	}
+
+	return c, nil
 }
 
 func (c *calendar) String() string {
 	return c.buf.String()
 }
 
-func (c *calendar) html() string {
+func (c *calendar) HTML() string {
 	md := []byte(c.String())
 	html := markdown.ToHTML(md, nil, nil)
 	return string(html)
