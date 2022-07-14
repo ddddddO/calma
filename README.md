@@ -38,12 +38,12 @@ Markdown output image<br>
 go version is 1.16 or higher.
 
 ```console
-go install github.com/ddddddO/calma@latest
+go install github.com/ddddddO/calma/cmd/calma@latest
 ```
 
 go version is 1.15 or less.
 ```console
-go get github.com/ddddddO/calma
+go get github.com/ddddddO/calma/cmd/calma
 ```
 
 or using Homebrew.
