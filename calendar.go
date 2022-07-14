@@ -23,20 +23,20 @@ const (
 		`|{{ if eq .Saturday.HolidayType 1 }} <font color="red">{{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else if eq .Saturday.HolidayType 2 }} <font color="blue">{{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}}</font> {{ else }} {{ if .Saturday.IsTargetMonth }}<b>{{ end }}{{.Saturday.N}} {{ end }}`
 )
 
-type calendar struct {
+type Calendar struct {
 	weekTemplate *template.Template
 	target       time.Time
 	month        *month
 	buf          *bytes.Buffer
 }
 
-func NewCalendar(target time.Time) (*calendar, error) {
+func NewCalendar(target time.Time) (*Calendar, error) {
 	tmpl, err := template.New("week").Parse(weekTemplate)
 	if err != nil {
 		return nil, xerrors.Errorf("failed to template.New: %w", err)
 	}
 
-	c := &calendar{
+	c := &Calendar{
 		weekTemplate: tmpl,
 		target:       target,
 		month:        &month{},
@@ -50,11 +50,11 @@ func NewCalendar(target time.Time) (*calendar, error) {
 	return c, nil
 }
 
-func (c *calendar) String() string {
+func (c *Calendar) String() string {
 	return c.buf.String()
 }
 
-func (c *calendar) HTML() string {
+func (c *Calendar) HTML() string {
 	md := []byte(c.String())
 	html := markdown.ToHTML(md, nil, nil)
 	return string(html)
@@ -88,7 +88,7 @@ const (
 	blueHoliday                    // 土曜
 )
 
-func (c *calendar) build() error {
+func (c *Calendar) build() error {
 	if err := c.buildHeader(); err != nil {
 		return xerrors.Errorf("failed to buildHeader: %w", err)
 	}
@@ -107,7 +107,7 @@ const (
 	partition = `--------|--------|--------|--------|--------|--------|--------`
 )
 
-func (c *calendar) buildHeader() error {
+func (c *Calendar) buildHeader() error {
 	const failedMsg = "failed to WriteString: %w"
 
 	_, err := c.buf.WriteString(fmt.Sprintf(title+"\n", c.target.Year(), c.target.Month()))
@@ -126,11 +126,11 @@ func (c *calendar) buildHeader() error {
 	return nil
 }
 
-func (c *calendar) calculate() {
+func (c *Calendar) calculate() {
 	c.month.calculateWeeks(c.target)
 }
 
-func (c *calendar) render() error {
+func (c *Calendar) render() error {
 	m := sync.Map{}
 	eg := errgroup.Group{}
 	for i, w := range c.month.weeks {
