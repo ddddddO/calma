@@ -11,7 +11,7 @@ import (
 
 var jst = time.FixedZone("JST", +9*60*60)
 
-func TestString(t *testing.T) {
+func TestCalendar_String(t *testing.T) {
 	tests := []struct {
 		name string
 		date time.Time
@@ -99,7 +99,7 @@ func TestString(t *testing.T) {
 	}
 }
 
-func TestHTML(t *testing.T) {
+func TestCalendar_HTML(t *testing.T) {
 	tests := []struct {
 		name string
 		date time.Time

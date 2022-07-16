@@ -55,7 +55,7 @@ func (c *Calendar) String() string {
 }
 
 func (c *Calendar) HTML() string {
-	md := []byte(c.String())
+	md := c.buf.Bytes()
 	html := markdown.ToHTML(md, nil, nil)
 	return string(html)
 }
