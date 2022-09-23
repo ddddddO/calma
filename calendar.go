@@ -230,8 +230,7 @@ func (m *month) calculateWeek(point time.Time, pointMonth time.Month) *week {
 		done <- struct{}{}
 	}
 
-	w := &week{}
-	done := make(chan struct{}, 2)
+	w, done := &week{}, make(chan struct{}, 2)
 	go retreatToSunday(w, done)
 	go advanceToSaturday(w, done)
 
