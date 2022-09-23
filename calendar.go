@@ -165,50 +165,51 @@ func (c *Calendar) render() error {
 	return nil
 }
 
-func (m *month) calculateWeeks(targetDate time.Time) {
-	targetMonth := targetDate.Month()
-
-	retWeeks := make(chan []*week, 1)
-	go func() {
-		retreat := targetDate
-		weeks := []*week{m.calculateWeek(targetDate, targetMonth)}
+func (m *month) calculateWeeks(pointDate time.Time) {
+	retreat := func(pointDate time.Time, retWeeks chan<- []*week) {
+		retreat := pointDate
+		pointMonth := pointDate.Month()
+		weeks := []*week{m.calculateWeek(pointDate, pointMonth)}
 		for {
 			retreat = retreat.AddDate(0, 0, -7)
-			w := m.calculateWeek(retreat, targetMonth)
+			w := m.calculateWeek(retreat, pointMonth)
 			weeks = append([]*week{w}, weeks...)
-			if retreat.Month() != targetMonth {
+			if retreat.Month() != pointMonth {
 				break
 			}
 		}
 		retWeeks <- weeks
-	}()
+	}
 
-	advWeeks := make(chan []*week, 1)
-	go func() {
-		advance := targetDate
+	advance := func(pointDate time.Time, advWeeks chan<- []*week) {
+		advance := pointDate
+		pointMonth := pointDate.Month()
 		weeks := make([]*week, 0, 8)
 		for {
 			advance = advance.AddDate(0, 0, 7)
-			w := m.calculateWeek(advance, targetMonth)
+			w := m.calculateWeek(advance, pointMonth)
 			weeks = append(weeks, w)
-			if advance.Month() != targetMonth {
+			if advance.Month() != pointMonth {
 				break
 			}
 		}
 		advWeeks <- weeks
-	}()
+	}
 
-	ret := <-retWeeks
-	adv := <-advWeeks
+	ret := make(chan []*week, 1)
+	go retreat(pointDate, ret)
 
-	m.weeks = append(ret, adv...)
+	adv := make(chan []*week, 1)
+	go advance(pointDate, adv)
+
+	m.weeks = append(<-ret, <-adv...)
 }
 
-func (m *month) calculateWeek(date time.Time, targetMonth time.Month) *week {
+func (m *month) calculateWeek(point time.Time, pointMonth time.Month) *week {
 	retreatToSunday := func(w *week, done chan<- struct{}) {
-		retreat := date
+		retreat := point
 		for {
-			w.calculateDay(retreat, targetMonth)
+			w.calculateDay(retreat, pointMonth)
 			if retreat.Weekday() == time.Sunday {
 				break
 			}
@@ -218,13 +219,13 @@ func (m *month) calculateWeek(date time.Time, targetMonth time.Month) *week {
 	}
 
 	advanceToSaturday := func(w *week, done chan<- struct{}) {
-		advance := date
+		advance := point
 		for {
 			if advance.Weekday() == time.Saturday {
 				break
 			}
 			advance = advance.AddDate(0, 0, 1)
-			w.calculateDay(advance, targetMonth)
+			w.calculateDay(advance, pointMonth)
 		}
 		done <- struct{}{}
 	}
@@ -240,10 +241,10 @@ func (m *month) calculateWeek(date time.Time, targetMonth time.Month) *week {
 	return w
 }
 
-func (w *week) calculateDay(date time.Time, targetMonth time.Month) {
+func (w *week) calculateDay(date time.Time, pointMonth time.Month) {
 	day := &day{
 		N:             uint(date.Day()),
-		IsTargetMonth: date.Month() == targetMonth,
+		IsTargetMonth: date.Month() == pointMonth,
 	}
 	day.calculateHoliday(date)
 
