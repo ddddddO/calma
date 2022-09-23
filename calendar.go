@@ -205,11 +205,7 @@ func (m *month) calculateWeeks(targetDate time.Time) {
 }
 
 func (m *month) calculateWeek(date time.Time, targetMonth time.Month) *week {
-	w := &week{}
-	done := make(chan struct{}, 2)
-
-	go func() {
-		// dateの週の日曜日まで遡る
+	retreatToSunday := func(w *week, done chan<- struct{}) {
 		retreat := date
 		for {
 			w.calculateDay(retreat, targetMonth)
@@ -219,10 +215,9 @@ func (m *month) calculateWeek(date time.Time, targetMonth time.Month) *week {
 			retreat = retreat.AddDate(0, 0, -1)
 		}
 		done <- struct{}{}
-	}()
+	}
 
-	go func() {
-		// dateの週の土曜日まで進む
+	advanceToSaturday := func(w *week, done chan<- struct{}) {
 		advance := date
 		for {
 			if advance.Weekday() == time.Saturday {
@@ -232,7 +227,12 @@ func (m *month) calculateWeek(date time.Time, targetMonth time.Month) *week {
 			w.calculateDay(advance, targetMonth)
 		}
 		done <- struct{}{}
-	}()
+	}
+
+	w := &week{}
+	done := make(chan struct{}, 2)
+	go retreatToSunday(w, done)
+	go advanceToSaturday(w, done)
 
 	<-done
 	<-done
