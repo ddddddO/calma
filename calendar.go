@@ -186,7 +186,7 @@ func (m *month) calculateWeeks(targetDate time.Time) {
 	advWeeks := make(chan []*week, 1)
 	go func() {
 		advance := targetDate
-		weeks := make([]*week, 0, 6)
+		weeks := make([]*week, 0, 8)
 		for {
 			advance = advance.AddDate(0, 0, 7)
 			w := m.calculateWeek(advance, targetMonth)
