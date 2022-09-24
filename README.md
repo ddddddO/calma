@@ -56,7 +56,7 @@ brew install ddddddO/tap/calma
 
 **or, download binary from [here](https://github.com/ddddddO/calma/releases).**
 
-## ETC
+## Miscellaneous
 ```console
 16:37:19 > calma -html
 <h4>2022年6月</h4>
