@@ -10,7 +10,7 @@ Can be used with [esa](https://esa.io/)<br>
 ## Usage
 
 ```console
-19:07:38 > calma -h
+$ calma -h
 This CLI outputs Japanese calendar in Markdown. It supports national holidays.
 
 Usage of calma:
@@ -21,7 +21,7 @@ Usage of calma:
   -r int
         Number of months to retreat
 
-19:07:57 > calma
+$ calma
 #### 2021年9月
 <font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>
 --------|--------|--------|--------|--------|--------|--------
@@ -41,24 +41,24 @@ Markdown output image<br>
 go version is 1.16 or higher.
 
 ```console
-go install github.com/ddddddO/calma/cmd/calma@latest
+$ go install github.com/ddddddO/calma/cmd/calma@latest
 ```
 
 go version is 1.15 or less.
 ```console
-go get github.com/ddddddO/calma/cmd/calma
+$ go get github.com/ddddddO/calma/cmd/calma
 ```
 
 or using Homebrew.
 ```console
-brew install ddddddO/tap/calma
+$ brew install ddddddO/tap/calma
 ```
 
 **or, download binary from [here](https://github.com/ddddddO/calma/releases).**
 
 ## Miscellaneous
 ```console
-16:37:19 > calma -html
+$ calma -html
 <h4>2022年6月</h4>
 
 <table>
