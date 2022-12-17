@@ -38,20 +38,26 @@ Markdown output image<br>
 
 ## Installation
 
-go version is 1.16 or higher.
+using Go (version is 1.16 or higher).
 
 ```console
 $ go install github.com/ddddddO/calma/cmd/calma@latest
 ```
 
-go version is 1.15 or less.
+using Go (version is 1.15 or less).
 ```console
 $ go get github.com/ddddddO/calma/cmd/calma
 ```
 
-or using Homebrew.
+using Homebrew.
 ```console
 $ brew install ddddddO/tap/calma
+```
+
+using Scoop.
+```console
+$ scoop bucket add ddddddO https://github.com/ddddddO/scoop-bucket.git
+$ scoop install ddddddO/calma
 ```
 
 **or, download binary from [here](https://github.com/ddddddO/calma/releases).**
