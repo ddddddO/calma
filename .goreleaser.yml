@@ -38,3 +38,12 @@ brews:
     homepage: 'https://github.com/ddddddO/calma'
     description: '♻Calendar for Markdown♻ ...only for Japan!🎌'
     license: "BSD-2-Clause"
+scoop:
+  bucket:
+    owner: ddddddO
+    name: scoop-bucket
+    token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+  url_template: "https://github.com/ddddddO/calma/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  homepage: "https://github.com/ddddddO/calma"
+  description: "♻Calendar for Markdown♻ ...only for Japan!🎌"
+  license: "BSD-2-Clause"
