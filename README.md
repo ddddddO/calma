@@ -34,33 +34,38 @@ $ calma
 ```
 
 Markdown output image<br>
-![image](https://github.com/ddddddO/calma/blob/main/sample.png)
+![image](./sample.png)
 
 ## Installation
 
-using Go (version is 1.16 or higher).
+### Go (1.16 or higher)
 
 ```console
 $ go install github.com/ddddddO/calma/cmd/calma@latest
 ```
 
-using Go (version is 1.15 or less).
+### Go (1.15 or less)
+
 ```console
 $ go get github.com/ddddddO/calma/cmd/calma
 ```
 
-using Homebrew.
+### Homebrew
+
 ```console
 $ brew install ddddddO/tap/calma
 ```
 
-using Scoop.
+### Scoop
+
 ```console
 $ scoop bucket add ddddddO https://github.com/ddddddO/scoop-bucket.git
 $ scoop install ddddddO/calma
 ```
 
-**or, download binary from [here](https://github.com/ddddddO/calma/releases).**
+### etc
+
+**download binary from [here](https://github.com/ddddddO/calma/releases).**
 
 ## Miscellaneous
 ```console
