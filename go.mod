@@ -1,6 +1,6 @@
 module github.com/ddddddO/calma
 
-go 1.19
+go 1.20
 
 require (
 	github.com/gomarkdown/markdown v0.0.0-20220607163217-45f7c050e2d1
