@@ -1,0 +1,10 @@
+goos: linux
+goarch: amd64
+cpu: Intel(R) Core(TM) i5-7200U CPU @ 2.50GHz
+BenchmarkCalendar_String-4   	    1101	   1002227 ns/op	   79643 B/op	    2506 allocs/op
+BenchmarkCalendar_String-4   	    1207	   1097066 ns/op	   79638 B/op	    2506 allocs/op
+BenchmarkCalendar_String-4   	    1124	   1060680 ns/op	   79637 B/op	    2506 allocs/op
+BenchmarkCalendar_String-4   	    1200	   1054817 ns/op	   79641 B/op	    2506 allocs/op
+BenchmarkCalendar_String-4   	    1190	    990573 ns/op	   79637 B/op	    2506 allocs/op
+PASS
+ok  	command-line-arguments	11.420s
