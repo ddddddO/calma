@@ -7,10 +7,24 @@ before:
 builds:
   - main: ./cmd/calma/
     binary: calma
+    ldflags:
+      - -s -w
+      - -X main.Version={{.Version}}
+      - -X main.Revision={{.ShortCommit}}
     goos:
-      - linux
       - darwin
       - windows
+    env:
+      - CGO_ENABLED=0
+  - id: calma-linux
+    main: ./cmd/calma
+    binary: calma
+    ldflags:
+      - -s -w
+      - -X main.Version={{.Version}}
+      - -X main.Revision={{.ShortCommit}}
+    goos:
+      - linux
     env:
       - CGO_ENABLED=0
 archives:
@@ -47,3 +61,18 @@ scoop:
   homepage: "https://github.com/ddddddO/calma"
   description: "♻Calendar for Markdown♻ ...only for Japan!🎌"
   license: "BSD-2-Clause"
+nfpms:
+  - id: calma-nfpms
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}-1_{{ .Arch }}"
+    builds:
+      - calma-linux
+    homepage: https://github.com/ddddddO/calma
+    maintainer: ddddddO <lbfdeatq@gmail.com>
+    description: "Calendar for Markdown ...only for Japan!"
+    license: BSD-2-Clause
+    formats:
+      - deb
+      - rpm
+      - apk
+    bindir: /usr/bin
+    epoch: 1

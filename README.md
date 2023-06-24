@@ -65,6 +65,26 @@ $ scoop bucket add ddddddO https://github.com/ddddddO/scoop-bucket.git
 $ scoop install ddddddO/calma
 ```
 
+### deb
+```console
+$ export CALMA_VERSION=X.X.X
+$ curl -o calma.deb -L https://github.com/ddddddO/calma/releases/download/v$CALMA_VERSION/calma_$CALMA_VERSION-1_amd64.deb
+$ dpkg -i calma.deb
+```
+
+### rpm
+```console
+$ export CALMA_VERSION=X.X.X
+$ yum install https://github.com/ddddddO/calma/releases/download/v$CALMA_VERSION/calma_$CALMA_VERSION-1_amd64.rpm
+```
+
+### apk
+```console
+$ export CALMA_VERSION=X.X.X
+$ curl -o calma.apk -L https://github.com/ddddddO/calma/releases/download/v$CALMA_VERSION/calma_$CALMA_VERSION-1_amd64.apk
+$ apk add --allow-untrusted calma.apk
+```
+
 ### etc
 
 **download binary from [here](https://github.com/ddddddO/calma/releases).**
