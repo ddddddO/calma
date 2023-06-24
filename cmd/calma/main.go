@@ -13,6 +13,11 @@ import (
 
 var jst = time.FixedZone("JST", +9*60*60)
 
+var (
+	Version  = "unset"
+	Revision = "unset"
+)
+
 func main() {
 	flag.Usage = func() {
 		usage := "This CLI outputs Japanese calendar in Markdown. It supports national holidays.\n\nUsage of %s:\n"
@@ -24,7 +29,15 @@ func main() {
 	flag.IntVar(&advance, "a", 0, "Number of months to advance")
 	var isHTML bool
 	flag.BoolVar(&isHTML, "html", false, "Output html")
+	var isVersion bool
+	flag.BoolVar(&isVersion, "version", false, "Show the version")
+
 	flag.Parse()
+
+	if isVersion {
+		fmt.Printf("calma version %s / revision %s\n", Version, Revision)
+		os.Exit(0)
+	}
 
 	if retreat != 0 && advance != 0 {
 		fmt.Fprintln(os.Stderr, xerrors.New("Please use either"))
