@@ -29,12 +29,6 @@ builds:
       - CGO_ENABLED=0
 archives:
   - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
-    replacements:
-      darwin: darwin
-      linux: linux
-      windows: windows
-      386: i386
-      amd64: x86_64
     format_overrides:
       - goos: windows
         format: zip
@@ -44,7 +38,7 @@ archives:
 release:
   prerelease: auto
 brews:
-  - tap:
+  - repository:
       owner: ddddddO
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
@@ -52,15 +46,15 @@ brews:
     homepage: 'https://github.com/ddddddO/calma'
     description: '♻Calendar for Markdown♻ ...only for Japan!🎌'
     license: "BSD-2-Clause"
-scoop:
-  bucket:
-    owner: ddddddO
-    name: scoop-bucket
-    token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-  url_template: "https://github.com/ddddddO/calma/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
-  homepage: "https://github.com/ddddddO/calma"
-  description: "♻Calendar for Markdown♻ ...only for Japan!🎌"
-  license: "BSD-2-Clause"
+scoops:
+  - repository:
+      owner: ddddddO\
+      name: scoop-bucket
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    url_template: "https://github.com/ddddddO/calma/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    homepage: "https://github.com/ddddddO/calma"
+    description: "♻Calendar for Markdown♻ ...only for Japan!🎌"
+    license: "BSD-2-Clause"
 nfpms:
   - id: calma-nfpms
     file_name_template: "{{ .ProjectName }}_{{ .Version }}-1_{{ .Arch }}"
