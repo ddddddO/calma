@@ -6,7 +6,7 @@
 Only for Japan
 
 Calendar for Markdown<br>
-Inspired by [jpcal](https://github.com/y-yagi/jpcal)<br>
+Inspired by **[_y-yagi/jpcal_](https://github.com/y-yagi/jpcal)**<br>
 Can be used with [esa](https://esa.io/)<br>
 
 ## Usage
