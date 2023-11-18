@@ -2,8 +2,8 @@
 
 [![GitHub release](https://img.shields.io/github/release/ddddddO/calma.svg)](https://github.com/ddddddO/calma/releases) [![Go Reference](https://pkg.go.dev/badge/github.com/ddddddO/calma)](https://pkg.go.dev/github.com/ddddddO/calma) [![ci](https://github.com/ddddddO/calma/actions/workflows/ci.yaml/badge.svg)](https://github.com/ddddddO/calma/actions/workflows/ci.yaml)
 
->**Warning**
-Only for Japan
+> [!WARNING]
+>Only for Japan
 
 Calendar for Markdown<br>
 Inspired by **[_y-yagi/jpcal_](https://github.com/y-yagi/jpcal)**<br>
