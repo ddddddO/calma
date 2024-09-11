@@ -180,3 +180,6 @@ $ calma -html
 </tbody>
 </table>
 ```
+
+## Stargazers over time
+[![Stargazers over time](https://starchart.cc/ddddddO/calma.svg?variant=adaptive)](https://starchart.cc/ddddddO/calma)
