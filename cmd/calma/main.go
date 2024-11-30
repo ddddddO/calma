@@ -25,8 +25,10 @@ func main() {
 		flag.PrintDefaults()
 	}
 	var retreat, advance int
+	var parallel bool
 	flag.IntVar(&retreat, "r", 0, "Number of months to retreat")
 	flag.IntVar(&advance, "a", 0, "Number of months to advance")
+	flag.BoolVar(&parallel, "parallel", false, "Parallel processing (performance deteriorates)")
 	var isHTML bool
 	flag.BoolVar(&isHTML, "html", false, "Output html")
 	var isVersion bool
@@ -52,7 +54,13 @@ func main() {
 		targetDate = targetDate.AddDate(0, advance, 0)
 	}
 
-	calendar, err := calma.NewCalendar(targetDate)
+	var calendar *calma.Calendar
+	var err error
+	if parallel {
+		calendar, err = calma.NewCalendarParallelly(targetDate)
+	} else {
+		calendar, err = calma.NewCalendar(targetDate)
+	}
 	if err != nil {
 		fmt.Fprintln(os.Stderr, xerrors.Errorf("%+v", err))
 		os.Exit(1)

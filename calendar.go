@@ -18,6 +18,8 @@ type Calendar struct {
 	target       time.Time
 	month        *month
 	buf          *bytes.Buffer
+
+	parallel bool
 }
 
 func NewCalendar(target time.Time) (*Calendar, error) {
@@ -31,6 +33,28 @@ func NewCalendar(target time.Time) (*Calendar, error) {
 		target:       target,
 		month:        &month{},
 		buf:          &bytes.Buffer{},
+		parallel:     false,
+	}
+
+	if err := c.build(); err != nil {
+		return nil, xerrors.Errorf("failed to build calendar: %w", err)
+	}
+
+	return c, nil
+}
+
+func NewCalendarParallelly(target time.Time) (*Calendar, error) {
+	tmpl, err := template.New("week").Parse(weekTemplate)
+	if err != nil {
+		return nil, xerrors.Errorf("failed to template.New: %w", err)
+	}
+
+	c := &Calendar{
+		weekTemplate: tmpl,
+		target:       target,
+		month:        &month{},
+		buf:          &bytes.Buffer{},
+		parallel:     true,
 	}
 
 	if err := c.build(); err != nil {
@@ -62,6 +86,8 @@ const (
 
 type month struct {
 	weeks []*week
+
+	parallel bool
 }
 
 type week struct {
@@ -128,37 +154,55 @@ func (c *Calendar) buildHeader() error {
 }
 
 func (c *Calendar) calculate() {
+	c.month.parallel = c.parallel
 	c.month.calculateWeeks(c.target)
 }
 
 func (c *Calendar) render() error {
-	m := sync.Map{}
-	eg := errgroup.Group{}
-	for i, w := range c.month.weeks {
-		i, w := i, w
-		eg.Go(func() error {
-			buf := &bytes.Buffer{}
-			if err := c.weekTemplate.Execute(buf, w); err != nil {
-				return xerrors.Errorf("failed to template.Execute: %w", err)
-			}
-			if _, err := buf.WriteString("\n"); err != nil {
-				return xerrors.Errorf("failed to WriteString: %w", err)
-			}
+	if c.parallel {
+		m := sync.Map{}
+		eg := errgroup.Group{}
+		for i, w := range c.month.weeks {
+			i, w := i, w
+			eg.Go(func() error {
+				buf := &bytes.Buffer{}
+				if err := c.weekTemplate.Execute(buf, w); err != nil {
+					return xerrors.Errorf("failed to template.Execute: %w", err)
+				}
+				if _, err := buf.WriteString("\n"); err != nil {
+					return xerrors.Errorf("failed to WriteString: %w", err)
+				}
 
-			m.Store(i, buf)
-			return nil
-		})
-	}
-	if err := eg.Wait(); err != nil {
-		return xerrors.Errorf("failed: %w", err)
+				m.Store(i, buf)
+				return nil
+			})
+		}
+		if err := eg.Wait(); err != nil {
+			return xerrors.Errorf("failed: %w", err)
+		}
+
+		for i := range c.month.weeks {
+			if v, ok := m.Load(i); ok {
+				b := v.(*bytes.Buffer)
+				if _, err := b.WriteTo(c.buf); err != nil {
+					return xerrors.Errorf("failed to WriteTo: %w", err)
+				}
+			}
+		}
+
+		return nil
 	}
 
-	for i := range c.month.weeks {
-		if v, ok := m.Load(i); ok {
-			b := v.(*bytes.Buffer)
-			if _, err := b.WriteTo(c.buf); err != nil {
-				return xerrors.Errorf("failed to WriteTo: %w", err)
-			}
+	for _, w := range c.month.weeks {
+		buf := &bytes.Buffer{}
+		if err := c.weekTemplate.Execute(buf, w); err != nil {
+			return xerrors.Errorf("failed to template.Execute: %w", err)
+		}
+		if _, err := buf.WriteString("\n"); err != nil {
+			return xerrors.Errorf("failed to WriteString: %w", err)
+		}
+		if _, err := buf.WriteTo(c.buf); err != nil {
+			return xerrors.Errorf("failed to WriteTo: %w", err)
 		}
 	}
 
@@ -196,13 +240,23 @@ func (m *month) calculateWeeks(pointDate time.Time) {
 		advWeeks <- weeks
 	}
 
-	ret := make(chan []*week, 1)
-	go retreat(pointDate, ret)
+	if m.parallel {
+		ret := make(chan []*week, 1)
+		go retreat(pointDate, ret)
 
-	adv := make(chan []*week, 1)
-	go advance(pointDate, adv)
+		adv := make(chan []*week, 1)
+		go advance(pointDate, adv)
 
-	m.weeks = append(<-ret, <-adv...)
+		m.weeks = append(<-ret, <-adv...)
+	} else {
+		ret := make(chan []*week, 1)
+		retreat(pointDate, ret)
+
+		adv := make(chan []*week, 1)
+		advance(pointDate, adv)
+
+		m.weeks = append(<-ret, <-adv...)
+	}
 }
 
 func (m *month) calculateWeek(point time.Time, pointMonth time.Month) *week {
@@ -230,9 +284,20 @@ func (m *month) calculateWeek(point time.Time, pointMonth time.Month) *week {
 		done <- struct{}{}
 	}
 
+	if m.parallel {
+		w, done := &week{}, make(chan struct{}, 2)
+		go retreatToSunday(w, done)
+		go advanceToSaturday(w, done)
+
+		<-done
+		<-done
+
+		return w
+	}
+
 	w, done := &week{}, make(chan struct{}, 2)
-	go retreatToSunday(w, done)
-	go advanceToSaturday(w, done)
+	retreatToSunday(w, done)
+	advanceToSaturday(w, done)
 
 	<-done
 	<-done
