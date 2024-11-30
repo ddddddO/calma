@@ -15,13 +15,17 @@ Can be used with [esa](https://esa.io/)<br>
 $ calma -h
 This CLI outputs Japanese calendar in Markdown. It supports national holidays.
 
-Usage of calma:
+Usage of /tmp/go-build2828539375/b001/exe/main:
   -a int
         Number of months to advance
   -html
         Output html
+  -parallel
+        Parallel processing (performance deteriorates)
   -r int
         Number of months to retreat
+  -version
+        Show the version
 
 $ calma
 #### 2021年9月
