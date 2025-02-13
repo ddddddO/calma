@@ -1,8 +1,8 @@
 module github.com/ddddddO/calma
 
-go 1.22
+go 1.24
 
-toolchain go1.22.0
+toolchain go1.24.0
 
 require (
 	github.com/gomarkdown/markdown v0.0.0-20220607163217-45f7c050e2d1
