@@ -19,7 +19,7 @@ type Calendar struct {
 	month        *month
 	buf          *bytes.Buffer
 
-	parallel bool
+	concurrent bool
 }
 
 func NewCalendar(target time.Time) (*Calendar, error) {
@@ -33,7 +33,7 @@ func NewCalendar(target time.Time) (*Calendar, error) {
 		target:       target,
 		month:        &month{},
 		buf:          &bytes.Buffer{},
-		parallel:     false,
+		concurrent:   false,
 	}
 
 	if err := c.build(); err != nil {
@@ -43,7 +43,7 @@ func NewCalendar(target time.Time) (*Calendar, error) {
 	return c, nil
 }
 
-func NewCalendarParallelly(target time.Time) (*Calendar, error) {
+func NewCalendarConcurrency(target time.Time) (*Calendar, error) {
 	tmpl, err := template.New("week").Parse(weekTemplate)
 	if err != nil {
 		return nil, xerrors.Errorf("failed to template.New: %w", err)
@@ -54,7 +54,7 @@ func NewCalendarParallelly(target time.Time) (*Calendar, error) {
 		target:       target,
 		month:        &month{},
 		buf:          &bytes.Buffer{},
-		parallel:     true,
+		concurrent:   true,
 	}
 
 	if err := c.build(); err != nil {
@@ -87,7 +87,7 @@ const (
 type month struct {
 	weeks []*week
 
-	parallel bool
+	concurrent bool
 }
 
 type week struct {
@@ -154,12 +154,12 @@ func (c *Calendar) buildHeader() error {
 }
 
 func (c *Calendar) calculate() {
-	c.month.parallel = c.parallel
+	c.month.concurrent = c.concurrent
 	c.month.calculateWeeks(c.target)
 }
 
 func (c *Calendar) render() error {
-	if c.parallel {
+	if c.concurrent {
 		m := sync.Map{}
 		eg := errgroup.Group{}
 		for i, w := range c.month.weeks {
@@ -240,7 +240,7 @@ func (m *month) calculateWeeks(pointDate time.Time) {
 		advWeeks <- weeks
 	}
 
-	if m.parallel {
+	if m.concurrent {
 		ret := make(chan []*week, 1)
 		go retreat(pointDate, ret)
 
@@ -284,7 +284,7 @@ func (m *month) calculateWeek(point time.Time, pointMonth time.Month) *week {
 		done <- struct{}{}
 	}
 
-	if m.parallel {
+	if m.concurrent {
 		w, done := &week{}, make(chan struct{}, 2)
 		go retreatToSunday(w, done)
 		go advanceToSaturday(w, done)

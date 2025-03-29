@@ -7,12 +7,12 @@ import (
 	"github.com/ddddddO/calma"
 )
 
-func BenchmarkCalendar_Parallel_String(b *testing.B) {
+func BenchmarkCalendar_Concurrent_String(b *testing.B) {
 	b.ResetTimer()
 
 	now := time.Now()
 	for i := 0; i < b.N; i++ {
-		c, err := calma.NewCalendarParallelly(now)
+		c, err := calma.NewCalendarConcurrency(now)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -21,7 +21,7 @@ func BenchmarkCalendar_Parallel_String(b *testing.B) {
 	}
 }
 
-func BenchmarkCalendar_NoParallel_String(b *testing.B) {
+func BenchmarkCalendar_NoConcurrent_String(b *testing.B) {
 	b.ResetTimer()
 
 	now := time.Now()

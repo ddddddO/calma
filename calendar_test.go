@@ -13,15 +13,15 @@ var jst = time.FixedZone("JST", +9*60*60)
 
 func TestCalendar_String(t *testing.T) {
 	tests := []struct {
-		name     string
-		date     time.Time
-		parallel bool
-		want     string
+		name       string
+		date       time.Time
+		concurrent bool
+		want       string
 	}{
 		{
-			name:     "succeeded",
-			date:     time.Date(2021, time.September, 24, 8, 0, 0, 0, jst),
-			parallel: false,
+			name:       "succeeded",
+			date:       time.Date(2021, time.September, 24, 8, 0, 0, 0, jst),
+			concurrent: false,
 			want: `#### 2021年9月` + "\n" +
 				`<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>` + "\n" +
 				`--------|--------|--------|--------|--------|--------|--------` + "\n" +
@@ -33,9 +33,9 @@ func TestCalendar_String(t *testing.T) {
 				` <font color="red"><b>26</font> | <b>27 | <b>28 | <b>29 | <b>30 | 1 | <font color="blue">2</font> ` + "\n",
 		},
 		{
-			name:     "succeeded(parallelly)",
-			date:     time.Date(2021, time.September, 24, 8, 0, 0, 0, jst),
-			parallel: true,
+			name:       "succeeded(concurrently)",
+			date:       time.Date(2021, time.September, 24, 8, 0, 0, 0, jst),
+			concurrent: true,
 			want: `#### 2021年9月` + "\n" +
 				`<font color="red">日</font>|月|火|水|木|金|<font color="blue">土</font>` + "\n" +
 				`--------|--------|--------|--------|--------|--------|--------` + "\n" +
@@ -109,8 +109,8 @@ func TestCalendar_String(t *testing.T) {
 
 		var calendar *Calendar
 		var err error
-		if tt.parallel {
-			calendar, err = NewCalendarParallelly(tt.date)
+		if tt.concurrent {
+			calendar, err = NewCalendarConcurrency(tt.date)
 		} else {
 			calendar, err = NewCalendar(tt.date)
 		}
