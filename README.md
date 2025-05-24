@@ -24,6 +24,8 @@ Usage of /tmp/go-build2828539375/b001/exe/main:
         Output html
   -r int
         Number of months to retreat
+  -t value
+        Specify month ('2006-01') (default 2025-05)
   -version
         Show the version
 
