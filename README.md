@@ -9,6 +9,10 @@ Calendar for Markdown<br>
 Inspired by **[_y-yagi/jpcal_](https://github.com/y-yagi/jpcal)**<br>
 Can be used with [esa](https://esa.io/)<br>
 
+## Acknowledgment
+- **[holiday-jp/holiday_jp-go](github.com/holiday-jp/holiday_jp-go)**
+  - Used to determine whether a day is Japanese holiday.
+
 ## Usage
 
 ```console
