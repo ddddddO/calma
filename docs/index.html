@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+ 
+<head prefix="og: https://ogp.me/ns#">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="日本のカレンダーをMarkdownで出力します!"/>
+  <!-- テーマカラー -->
+  <meta name="theme-color" content="#134e4a">
+  <!-- テーマカラー　モード指定 -->
+  <meta name="theme-color" content="#134e4a" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#134e4a" media="(prefers-color-scheme: dark)">
+
+  <meta property="og:url" content="https://ddddddo.github.io/calma/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="calma" />
+  <meta property="og:description" content="日本のカレンダーをMarkdownで出力します!" />
+  <meta property="og:site_name" content="calma" />
+
+  <!-- favicon.svg -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
+
+  <title>calma</title>
+
+  <link href="toast.css" rel="stylesheet">
+  <script src="wasm_exec.js"></script>
+  <script src="main.js"></script>
+</head>
+<body>
+  <div>
+    <h1 class="text-3xl font-bold">
+      calma<iframe src="https://ghbtns.com/github-btn.html?user=ddddddO&repo=calma&type=star&count=true" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+    </h1>
+  </div>
+
+  <div id="main">
+    <div>
+      <div>
+        <input type="number" id="year" min="1900" max="3000" value="2025"> 年
+        <input type="number" id="month" min="1" max="12"  value="5"> 月
+      </div>
+
+      <div>
+        <button onClick="callCalma();" id="call">Run</button>
+        <button onClick="copyToClipboard();" id="copy">Copy</button>
+        <button onClick="now();" id="now">Now</button>
+        <div id="toast"></div>
+      </div>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script src="toast.js"></script>
+  <script>
+    // register service_worker.js
+    // if ('serviceWorker' in navigator) {
+    //   navigator.serviceWorker.register('./service_worker.js').then(function(registration) {
+    //     console.log('succeeded: ', registration.scope);
+    //   }).catch(function(err) {
+    //     console.log('failed: ', err);
+    //   });
+    // }
+  </script>
+</body>
+
+</html>
