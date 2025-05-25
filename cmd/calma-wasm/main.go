@@ -2,7 +2,7 @@ package main
 
 import (
 	"strconv"
-	"syscall/js"
+	"syscall/js" // nolint
 	"text/template"
 	"time"
 
